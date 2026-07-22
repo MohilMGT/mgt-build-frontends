@@ -1,3 +1,7 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🌾</text></svg>">
+<title>Demeter — Demographic &amp; Enrollment Study</title>
 <style>
   /* ---------- Demeter design tokens ---------- */
   /* ==== MGT frontend-template "atlas" design system (mirrored from the real theme) ==== */
@@ -44,6 +48,7 @@
   }
 
   *{box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
   body{margin:0}
   #app{font-family:var(--font-ui); color:var(--ink); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased; line-height:1.5;}
   h1,h2,h3,h4{margin:0; text-wrap:balance; font-weight:650; letter-spacing:-.01em;}
@@ -257,14 +262,14 @@
           <div class="eyebrow" style="margin-top:2px">Demographic &amp; Enrollment Study</div>
         </div>
       </div>
-      <p class="doc-p" style="margin-top:16px; font-size:13px; color:var(--muted)">Sign in to run a district enrollment-forecast engagement — from client data intake to the board-ready forecast report and deck.</p>
+      <p class="doc-p" style="margin-top:16px; font-size:13px; color:var(--muted)">Enter your name to open the public interactive enrollment-study frontend — from client data intake to the board-ready forecast report and deck.</p>
       <div class="field"><label for="fn">First name</label><input id="fn" required placeholder="e.g. Cassondra" autocomplete="given-name"></div>
       <div class="field"><label for="ln">Last name</label><input id="ln" required placeholder="e.g. Torlucci" autocomplete="family-name"></div>
       <div class="field"><label for="role0">Your role</label>
         <select id="role0"><option>Project Manager</option><option>Demographer / Analyst</option><option>GIS Analyst</option></select>
       </div>
-      <button class="btn primary" type="submit" style="width:100%; justify-content:center; margin-top:18px; padding:11px">Sign in with MGT SSO</button>
-      <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:12px">Showing the <strong>Demo Unified School District</strong> worked example · your real district data loads once connected</p>
+      <button class="btn primary" type="submit" style="width:100%; justify-content:center; margin-top:18px; padding:11px">Open public frontend</button>
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:12px">No account required · opens the interactive <strong>Demo Unified School District</strong> worked example</p>
     </form>
   </div>
 
