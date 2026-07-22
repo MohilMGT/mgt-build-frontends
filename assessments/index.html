@@ -1,0 +1,855 @@
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>☀</text></svg>">
+<title>Apollo — Higher-Ed Technology Assessment</title>
+<style>
+  /* ---------- Apollo design tokens ---------- */
+  /* ==== MGT frontend-template "atlas" design system (mirrored from the real theme) ==== */
+  :root{
+    --font-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    --font-num: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --bg:#f5f6fa; --surface:#ffffff; --surface-2:#f5f6fa; --surface-3:#eaecf5;
+    --ink:#1e1f3c; --ink-2:#4444664d; --muted:#676f94; --hairline:#e2e4ef; --hairline-2:#edeef6;
+    /* brand: MGT reflex blue / navy; secondary purple */
+    --brand:#000f9e; --brand-ink:#0a0d4f; --brand-soft:#e7eafb; --on-brand:#ffffff; --wheat:#d4a628; --secondary:#b54096;
+    /* semantic status (atlas) */
+    --ok:#047857; --ok-soft:#d1fae5; --warn:#b45309; --warn-soft:#fef3c7; --crit:#b42318; --crit-soft:#fee2e2;
+    /* categorical chart palette (validated CVD-safe, light) */
+    --c1:#2b6cb0; --c2:#dd6b20; --c3:#7a54c4;
+    --shadow:0 1px 2px rgba(10,13,79,.05), 0 6px 20px rgba(10,13,79,.09);
+    --radius:12px; --radius-sm:8px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b0d24; --surface:#14173a; --surface-2:#1c2048; --surface-3:#2a2e5a;
+      --ink:#e5e8f4; --ink-2:#e5e8f44d; --muted:#a8afc9; --hairline:#2e3360; --hairline-2:#242749;
+      --brand:#89b7e8; --brand-ink:#b9d2f0; --brand-soft:#1c2450; --on-brand:#0a0d4f; --wheat:#f0c552; --secondary:#d8a6ca;
+      --ok:#34d399; --ok-soft:#0f2b22; --warn:#fbbf24; --warn-soft:#2c2411; --crit:#f87171; --crit-soft:#2e1a18;
+      --c1:#4685c4; --c2:#ce7e3e; --c3:#9a78d2;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f6fa; --surface:#ffffff; --surface-2:#f5f6fa; --surface-3:#eaecf5;
+    --ink:#1e1f3c; --muted:#676f94; --hairline:#e2e4ef; --hairline-2:#edeef6;
+    --brand:#000f9e; --brand-ink:#0a0d4f; --brand-soft:#e7eafb; --on-brand:#ffffff; --wheat:#d4a628; --secondary:#b54096;
+    --ok:#047857; --ok-soft:#d1fae5; --warn:#b45309; --warn-soft:#fef3c7; --crit:#b42318; --crit-soft:#fee2e2;
+    --c1:#2b6cb0; --c2:#dd6b20; --c3:#7a54c4;
+    --shadow:0 1px 2px rgba(10,13,79,.05), 0 6px 20px rgba(10,13,79,.09);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b0d24; --surface:#14173a; --surface-2:#1c2048; --surface-3:#2a2e5a;
+    --ink:#e5e8f4; --muted:#a8afc9; --hairline:#2e3360; --hairline-2:#242749;
+    --brand:#89b7e8; --brand-ink:#b9d2f0; --brand-soft:#1c2450; --on-brand:#0a0d4f; --wheat:#f0c552; --secondary:#d8a6ca;
+    --ok:#34d399; --ok-soft:#0f2b22; --warn:#fbbf24; --warn-soft:#2c2411; --crit:#f87171; --crit-soft:#2e1a18;
+    --c1:#4685c4; --c2:#ce7e3e; --c3:#9a78d2;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0}
+  #app{font-family:var(--font-ui); color:var(--ink); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased; line-height:1.5;}
+  h1,h2,h3,h4{margin:0; text-wrap:balance; font-weight:650; letter-spacing:-.01em;}
+  p{margin:0}
+  button{font-family:inherit; cursor:pointer}
+  a{color:var(--brand)}
+  .num{font-variant-numeric:tabular-nums; font-family:var(--font-num)}
+  .eyebrow{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+  :focus-visible{outline:2px solid var(--brand); outline-offset:2px; border-radius:4px}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important; animation:none!important}}
+
+  /* ---------- shell ---------- */
+  .shell{display:grid; grid-template-columns:248px 1fr; grid-template-rows:auto 1fr; grid-template-areas:"top top" "side main"; min-height:100vh}
+  .topbar{grid-area:top; display:flex; align-items:center; gap:16px; padding:0 20px; height:58px; background:var(--surface); border-bottom:1px solid var(--hairline); position:sticky; top:0; z-index:30}
+  .side{grid-area:side; background:var(--surface); border-right:1px solid var(--hairline); padding:14px 12px; display:flex; flex-direction:column; gap:3px; position:sticky; top:58px; height:calc(100vh - 58px); overflow-y:auto}
+  .main{grid-area:main; padding:22px 26px 80px; max-width:1160px}
+
+  /* wordmark */
+  .brandmark{display:flex; align-items:center; gap:10px; min-width:220px}
+  .grain{width:30px; height:30px; flex:0 0 auto}
+  .brandmark .name{font-size:18px; font-weight:750; letter-spacing:-.02em}
+  .brandmark .sub{font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.04em; text-transform:uppercase}
+
+  .topbar .spacer{flex:1}
+  .proj-pill{display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--hairline); border-radius:999px; padding:5px 12px 5px 10px; font-size:13px; font-weight:600}
+  .proj-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+  .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:9px; background:transparent; border:1px solid transparent; color:var(--muted)}
+  .icon-btn:hover{background:var(--surface-2); color:var(--ink)}
+  .who{display:flex; align-items:center; gap:9px}
+  .avatar{width:30px;height:30px;border-radius:50%; background:var(--brand); color:var(--on-brand); display:grid; place-items:center; font-size:12px; font-weight:700}
+  .role-select{font-family:inherit; font-size:12px; font-weight:600; color:var(--ink); background:var(--surface-2); border:1px solid var(--hairline); border-radius:8px; padding:6px 8px}
+
+  /* nav */
+  .nav-group-label{font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:12px 10px 5px}
+  .nav-item{display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:9px; color:var(--ink); font-size:13.5px; font-weight:560; border:1px solid transparent; text-align:left; background:transparent; width:100%}
+  .nav-item:hover{background:var(--surface-2)}
+  .nav-item.active{background:var(--brand-soft); color:var(--brand-ink); border-color:transparent; font-weight:650}
+  .nav-item .ni{width:18px; height:18px; flex:0 0 auto; opacity:.85}
+  .nav-item .badge{margin-left:auto; font-size:10px; font-weight:700; padding:1px 7px; border-radius:999px; background:var(--surface-3); color:var(--muted)}
+  .nav-item .badge.warn{background:var(--warn-soft); color:var(--warn)}
+  .nav-item .badge.ok{background:var(--ok-soft); color:var(--ok)}
+  .nav-item.locked{opacity:.48; cursor:not-allowed}
+  .nav-item.locked:hover{background:transparent}
+  .nav-item .lockico{margin-left:auto; opacity:.6}
+  .nav-item.next{outline:2px solid var(--brand); outline-offset:-2px; animation:nextpulse 1.9s ease-in-out infinite}
+  @keyframes nextpulse{0%,100%{box-shadow:0 0 0 0 var(--brand-soft)}50%{box-shadow:0 0 0 5px var(--brand-soft)}}
+  .appfooter{margin-top:36px; padding-top:14px; border-top:1px solid var(--hairline); display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:11.5px; color:var(--muted)}
+  .appfooter code{font-family:var(--font-num); background:var(--surface-2); padding:1px 6px; border-radius:5px; border:1px solid var(--hairline); color:var(--ink)}
+  .steps3{display:flex; gap:12px; flex-wrap:wrap}
+  .step3{flex:1; min-width:180px; background:var(--surface); border:1px solid var(--hairline); border-radius:10px; padding:13px; box-shadow:var(--shadow)}
+  .step3 .s3n{width:22px;height:22px;border-radius:6px;background:var(--brand-soft);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;font-size:12px;font-family:var(--font-num)}
+
+  /* view header */
+  .view-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:6px}
+  .view-head h1{font-size:23px}
+  .view-head .vh-sub{color:var(--muted); font-size:13.5px; margin-top:3px; max-width:64ch}
+  .view-head .vh-actions{margin-left:auto; display:flex; align-items:center; gap:8px}
+  .howto{display:flex; gap:9px; align-items:flex-start; background:var(--brand-soft); border:1px solid transparent; color:var(--brand-ink); padding:9px 12px; border-radius:10px; font-size:12.5px; margin:12px 0 18px; max-width:80ch}
+  .howto svg{flex:0 0 auto; margin-top:1px}
+
+  /* cards + grid */
+  .grid{display:grid; gap:14px}
+  .card{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)}
+  .card h3{font-size:14.5px}
+  .card .card-sub{color:var(--muted); font-size:12px; margin-top:2px}
+  .stat{display:flex; flex-direction:column; gap:3px}
+  .stat .k{font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+  .stat .v{font-size:27px; font-weight:720; letter-spacing:-.02em}
+  .stat .d{font-size:12px; color:var(--muted)}
+  .trend-down{color:var(--crit); font-weight:650}
+  .trend-up{color:var(--ok); font-weight:650}
+
+  /* pills / chips */
+  .chip{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:650; padding:3px 9px; border-radius:999px; background:var(--surface-3); color:var(--muted); white-space:nowrap}
+  .chip.ok{background:var(--ok-soft); color:var(--ok)} .chip.warn{background:var(--warn-soft); color:var(--warn)}
+  .chip.crit{background:var(--crit-soft); color:var(--crit)} .chip.brand{background:var(--brand-soft); color:var(--brand-ink)}
+  .chip .cdot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  .btn{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:650; padding:8px 14px; border-radius:9px; border:1px solid var(--hairline); background:var(--surface); color:var(--ink)}
+  .btn:hover{background:var(--surface-2)}
+  .btn.primary{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+  .btn.primary:hover{background:var(--brand-ink)}
+  .btn.sm{padding:5px 10px; font-size:12px}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+
+  /* tables */
+  .table-wrap{overflow-x:auto; border:1px solid var(--hairline); border-radius:10px}
+  table{border-collapse:collapse; width:100%; font-size:12.5px}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--hairline-2); white-space:nowrap}
+  th{background:var(--surface-2); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:700; position:sticky; top:0}
+  td.n, th.n{text-align:right; font-variant-numeric:tabular-nums; font-family:var(--font-num)}
+  tbody tr:hover{background:var(--surface-2)}
+  tr:last-child td{border-bottom:none}
+  .total-row td{font-weight:700; background:var(--surface-2)}
+
+  /* process */
+  .phase{border:1px solid var(--hairline); border-radius:12px; background:var(--surface); margin-bottom:12px; overflow:hidden}
+  .phase-head{display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer}
+  .phase-head:hover{background:var(--surface-2)}
+  .phase-idx{width:26px;height:26px;border-radius:8px; display:grid; place-items:center; font-size:12px; font-weight:700; background:var(--surface-3); color:var(--muted); font-family:var(--font-num)}
+  .phase.done .phase-idx{background:var(--ok-soft); color:var(--ok)}
+  .phase.active .phase-idx{background:var(--brand); color:#fff}
+  .phase.gate .phase-idx{background:var(--warn-soft); color:var(--warn)}
+  .phase.apollo{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand)}
+  .phase-title{font-weight:650; font-size:14px}
+  .phase-meta{color:var(--muted); font-size:12px}
+  .phase-body{padding:4px 16px 14px 54px; display:none}
+  .phase.open .phase-body{display:block}
+  .step{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--hairline-2); font-size:13px}
+  .step:first-child{border-top:none}
+  .step .sdot{width:16px;height:16px;border-radius:50%; border:2px solid var(--hairline); flex:0 0 auto}
+  .step.done .sdot{background:var(--ok); border-color:var(--ok)}
+  .step.active .sdot{border-color:var(--brand); box-shadow:inset 0 0 0 3px var(--brand)}
+  .step.gate .sdot{border-color:var(--warn); background:var(--warn-soft)}
+  .step .stype{margin-left:auto; font-size:10.5px}
+  .prog-ring{--p:62; width:120px;height:120px; position:relative}
+  .prog-ring svg{transform:rotate(-90deg)}
+  .prog-ring .pt{position:absolute; inset:0; display:grid; place-items:center; font-size:26px; font-weight:750; font-family:var(--font-num)}
+
+  /* tabs */
+  .tabs{display:flex; gap:4px; border-bottom:1px solid var(--hairline); margin:6px 0 16px; flex-wrap:wrap}
+  .tab{padding:8px 13px; font-size:13px; font-weight:600; color:var(--muted); border:none; background:transparent; border-bottom:2px solid transparent; margin-bottom:-1px}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--brand-ink); border-bottom-color:var(--brand); font-weight:680}
+  .tabpane{display:none} .tabpane.active{display:block}
+
+  /* status rows */
+  .recon{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--hairline); border-radius:10px; margin-bottom:8px; background:var(--surface)}
+  .recon .rl{width:5px; align-self:stretch; border-radius:3px; background:var(--ok)}
+  .recon.bad .rl{background:var(--crit)}
+  .recon .rmeta{flex:1}
+  .recon .rname{font-weight:640; font-size:13px}
+  .recon .rdesc{color:var(--muted); font-size:12px}
+  .recon .rnums{font-family:var(--font-num); font-size:12.5px; text-align:right}
+
+  /* deliverables */
+  .report-shell{display:grid; grid-template-columns:250px 1fr; gap:0; border:1px solid var(--hairline); border-radius:10px; overflow:hidden}
+  .report-toc{background:var(--surface-2); border-right:1px solid var(--hairline); padding:8px}
+  .toc-item{padding:7px 10px; border-radius:7px; font-size:12.5px; color:var(--ink); cursor:pointer; display:flex; gap:8px; align-items:center}
+  .toc-item:hover{background:var(--surface-3)} .toc-item.active{background:var(--brand-soft); color:var(--brand-ink); font-weight:640}
+  .toc-item .tnum{font-family:var(--font-num); color:var(--muted); font-size:11px}
+  .report-page{padding:26px 30px; background:var(--surface); min-height:360px}
+  .report-page h2{font-size:19px; margin-bottom:4px}
+  .doc-p{font-size:13px; color:var(--ink); margin:10px 0; max-width:66ch; line-height:1.65}
+  .slide-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px}
+  .slide{border:1px solid var(--hairline); border-radius:10px; overflow:hidden; background:var(--surface)}
+  .slide .sthumb{aspect-ratio:16/9; background:linear-gradient(135deg,var(--surface-3),var(--surface-2)); display:grid; place-items:center; color:var(--muted); font-size:11px; border-bottom:1px solid var(--hairline); position:relative}
+  .slide .scap{padding:8px 10px; font-size:11.5px; font-weight:600}
+  .slide .snum{position:absolute; top:6px; left:8px; font-family:var(--font-num); font-size:10px; color:var(--muted)}
+
+  /* feedback */
+  .fb{display:inline-flex; gap:4px; align-items:center}
+  .fb button{width:30px;height:30px;border-radius:8px;border:1px solid var(--hairline); background:var(--surface); color:var(--muted); display:grid; place-items:center}
+  .fb button:hover{background:var(--surface-2); color:var(--ink)}
+  .fb button.up.on{background:var(--ok-soft); color:var(--ok); border-color:transparent}
+  .fb button.down.on{background:var(--crit-soft); color:var(--crit); border-color:transparent}
+  .fb-log{display:flex; flex-direction:column; gap:8px}
+  .fb-row{display:flex; gap:10px; align-items:flex-start; padding:11px 13px; border:1px solid var(--hairline); border-radius:10px; background:var(--surface); font-size:12.5px}
+
+  /* Ask Apollo drawer */
+  .ask-fab{position:fixed; right:22px; bottom:22px; z-index:40; display:flex; align-items:center; gap:9px; padding:11px 16px 11px 13px; border-radius:999px; background:var(--brand); color:var(--on-brand); border:none; box-shadow:0 6px 20px rgba(10,13,79,.35); font-size:13.5px; font-weight:650}
+  .ask-fab:hover{background:var(--brand-ink)}
+  .drawer{position:fixed; top:0; right:0; height:100vh; width:390px; max-width:92vw; background:var(--surface); border-left:1px solid var(--hairline); box-shadow:-8px 0 30px rgba(0,0,0,.14); z-index:50; transform:translateX(100%); transition:transform .28s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{display:flex; align-items:center; gap:10px; padding:15px 16px; border-bottom:1px solid var(--hairline)}
+  .drawer-body{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px}
+  .msg{max-width:88%; padding:10px 13px; border-radius:13px; font-size:13px; line-height:1.55}
+  .msg.bot{background:var(--surface-2); border:1px solid var(--hairline-2); align-self:flex-start; border-bottom-left-radius:4px}
+  .msg.user{background:var(--brand); color:var(--on-brand); align-self:flex-end; border-bottom-right-radius:4px}
+  .sugg{display:flex; flex-wrap:wrap; gap:7px}
+  .sugg button{font-size:12px; padding:6px 11px; border-radius:999px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--brand-ink); font-weight:600}
+  .sugg button:hover{background:var(--brand-soft)}
+  .drawer-input{padding:12px; border-top:1px solid var(--hairline); display:flex; gap:8px}
+  .drawer-input input{flex:1; font-family:inherit; font-size:13px; padding:9px 12px; border-radius:9px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink)}
+
+  /* login */
+  .login{position:fixed; inset:0; z-index:80; background:linear-gradient(160deg,var(--bg),var(--surface-2)); display:grid; place-items:center; padding:20px}
+  .login-card{background:var(--surface); border:1px solid var(--hairline); border-radius:16px; box-shadow:var(--shadow); padding:34px; width:100%; max-width:400px}
+  .login-card .grain{width:44px;height:44px}
+  .field{display:flex; flex-direction:column; gap:5px; margin-top:14px}
+  .field label{font-size:12px; font-weight:650; color:var(--muted)}
+  .field input, .field select{font-family:inherit; font-size:14px; padding:11px 13px; border-radius:10px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink)}
+  .hidden{display:none!important}
+  .draft-note{margin:12px 0;padding:12px 14px;border:1px solid var(--warn);border-left:4px solid var(--warn);border-radius:10px;background:var(--warn-soft);font-size:12.5px;color:var(--ink)}
+  .draft-note strong{display:block;margin-bottom:3px}
+  .modal{border:1px solid var(--hairline);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 18px 60px rgba(0,0,0,.28);width:min(620px,calc(100vw - 32px));padding:0}
+  .modal::backdrop{background:rgba(8,12,38,.55)}
+  .modal-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--hairline)}
+  .modal-body{padding:18px;max-height:70vh;overflow:auto}
+  .change{padding:12px 0;border-top:1px solid var(--hairline-2);font-size:13px}.change:first-child{border-top:0}
+  .version-link{font:inherit;border:0;background:transparent;color:var(--brand);text-decoration:underline;padding:0;cursor:pointer}
+
+  /* charts */
+  .chart-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:8px}
+  .chart-legend .lg{display:inline-flex; align-items:center; gap:6px}
+  .chart-legend .sw{width:11px;height:11px;border-radius:3px}
+  .tooltip{position:fixed; pointer-events:none; background:var(--ink); color:var(--surface); font-size:11.5px; padding:6px 9px; border-radius:7px; z-index:70; opacity:0; transition:opacity .1s; font-family:var(--font-num); white-space:nowrap; box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  svg .gridline{stroke:var(--hairline-2)} svg text{fill:var(--muted); font-size:10px; font-family:var(--font-ui)}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr;grid-template-rows:auto auto 1fr;grid-template-areas:"top" "side" "main"}
+    .topbar{padding:0 10px;gap:8px}.brandmark{min-width:0}.brandmark .sub,.proj-pill,.who{display:none}
+    .side{display:flex;position:sticky;top:58px;height:auto;z-index:25;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--hairline);padding:7px;gap:5px}
+    .nav-group-label{display:none}.nav-item{width:auto;min-width:max-content;padding:7px 9px}.nav-item .ni{display:none}
+    .main{padding:18px 14px 84px;max-width:100vw}.view-head{flex-wrap:wrap}.view-head .vh-actions{margin-left:0}
+    .grid{grid-template-columns:1fr!important}.ask-fab{right:12px;bottom:12px}
+    .report-shell{grid-template-columns:1fr} .report-toc{border-right:none; border-bottom:1px solid var(--hairline)}
+  }
+</style>
+
+<div id="app">
+  <!-- ================= LOGIN ================= -->
+  <div class="login" id="login">
+    <form class="login-card" id="loginForm">
+      <div style="display:flex; align-items:center; gap:12px">
+        <svg class="grain" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="var(--wheat)" stroke-width="1.7" stroke-linecap="round"><circle cx="16" cy="16" r="6"/><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.7 6.7l2.1 2.1M23.2 23.2l2.1 2.1M25.3 6.7l-2.1 2.1M8.8 23.2l-2.1 2.1"/></g></svg>
+        <div>
+          <div style="font-size:22px; font-weight:760; letter-spacing:-.02em">Apollo</div>
+          <div class="eyebrow" style="margin-top:2px">Higher-Ed Technology Assessment</div>
+        </div>
+      </div>
+      <p class="doc-p" style="margin-top:16px; font-size:13px; color:var(--muted)">Sign in to run a technology-assessment engagement end to end — from signed contract to the final report, budgetary estimate, and executive presentation.</p>
+      <div class="field"><label for="fn">First name</label><input id="fn" required placeholder="e.g. Kelser" autocomplete="given-name"></div>
+      <div class="field"><label for="ln">Last name</label><input id="ln" required placeholder="e.g. McMiller" autocomplete="family-name"></div>
+      <div class="field"><label for="role0">Your role</label>
+        <select id="role0"><option>Project Manager</option><option>Lead Analyst</option><option>Leadership</option></select>
+      </div>
+      <button class="btn primary" type="submit" style="width:100%; justify-content:center; margin-top:18px; padding:11px">Sign in with MGT SSO</button>
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:12px">Showing the <strong>Demo State University</strong> worked example · your real engagement loads once connected</p>
+    </form>
+  </div>
+
+  <!-- ================= APP SHELL ================= -->
+  <div class="shell" id="shell" aria-hidden="true">
+    <!-- topbar -->
+    <header class="topbar">
+      <div class="brandmark">
+        <svg class="grain" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="var(--wheat)" stroke-width="1.7" stroke-linecap="round"><circle cx="16" cy="16" r="6"/><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.7 6.7l2.1 2.1M23.2 23.2l2.1 2.1M25.3 6.7l-2.1 2.1M8.8 23.2l-2.1 2.1"/></g></svg>
+        <div><div class="name">Apollo</div><div class="sub">Technology Assessment</div></div>
+      </div>
+      <div class="proj-pill"><span class="dot"></span> Demo State University <span style="color:var(--muted); font-weight:500">· ERP Modernization Assessment</span></div>
+      <div class="spacer"></div>
+      <select class="role-select" id="roleSelect" title="Your role"><option>Project Manager</option><option>Lead Analyst</option><option>Leadership</option></select>
+      <button class="icon-btn" id="themeBtn" title="Toggle light / dark" aria-label="Toggle theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>
+      </button>
+      <div class="who"><div class="avatar" id="avatar">–</div></div>
+    </header>
+
+    <!-- sidebar -->
+    <nav class="side" id="side"></nav>
+
+    <!-- main -->
+    <main class="main" id="main"></main>
+  </div>
+
+  <!-- Ask Apollo -->
+  <button class="ask-fab" id="askFab">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Ask Apollo
+  </button>
+  <aside class="drawer" id="drawer" aria-label="Ask Apollo help">
+    <div class="drawer-head">
+      <div class="avatar" style="background:var(--brand); color:var(--on-brand)">A</div>
+      <div style="flex:1"><div style="font-weight:680; font-size:14px">Ask Apollo</div><div style="font-size:11.5px; color:var(--muted)">Your guide to this step</div></div>
+      <button class="icon-btn" id="drawerClose" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-input"><input id="askInput" placeholder="Ask about this screen…" aria-label="Ask a question"><button class="btn primary sm" id="askSend">Send</button></div>
+  </aside>
+
+  <div class="tooltip" id="tip"></div>
+  <dialog class="modal" id="changeLog" aria-labelledby="changeTitle">
+    <div class="modal-head"><div style="flex:1"><div class="eyebrow">Apollo release history</div><h2 id="changeTitle">What changed</h2></div><button class="icon-btn" id="changeClose" aria-label="Close changelog">✕</button></div>
+    <div class="modal-body">
+      <div class="change"><strong>1.1.0 · July 22, 2026</strong><p>Added Evidence Intake for all 15 logical source files; explicit accepted, quarantined, and review states; PII and malformed-workbook safeguards; the exact 33-step map; and clear AI-draft provenance and approval language. Fixed mobile navigation and cross-domain evidence contamination.</p></div>
+      <div class="change"><strong>1.0.0 · July 21, 2026</strong><p>Initial interactive Apollo workflow prototype for the supplied Higher-Ed Technology Assessment process.</p></div>
+    </div>
+  </dialog>
+</div>
+
+<script type="application/json" id="artifact-state">{"product":"Apollo","version":"1.1.0","workflow":"Higher-Ed Technology Assessment","workflowSteps":33,"logicalInputs":15,"workflowAuthority":"Assessments-process-map-basic.svg","crossDomainFixtures":["AlvordUSD.zip","PleasantonUSD.zip"],"piiPolicy":"aggregate-only; raw PII excluded from browser and AI prompts","draftAutoSend":false}</script>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var el=function(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+
+  /* ---------------- state ---------------- */
+  var APP_VERSION="1.1.0";
+  var STATE={ first:"", last:"", role:"Project Manager", view:"home", feedback:[], unlocked:5, emailStatus:"needs review" };
+  var STAGE={process:1,setup:2,interviews:3,reports:4,deliver:5};
+  var PAL=function(){ var cs=getComputedStyle(document.documentElement); return {c1:cs.getPropertyValue('--c1').trim(),c2:cs.getPropertyValue('--c2').trim(),c3:cs.getPropertyValue('--c3').trim(),brand:cs.getPropertyValue('--brand').trim(),ink:cs.getPropertyValue('--muted').trim(),grid:cs.getPropertyValue('--hairline-2').trim()};};
+
+  /* ---------------- demo data (anonymized Demo State University) ---------------- */
+  /* 9 assessment domains, each producing a section report */
+  var DOMAINS=[
+    ["Finance & ERP","finalized",3],
+    ["Human Resources & Payroll","finalized",2],
+    ["Student Information System","finalized",2],
+    ["Advancement & CRM","finalized",2],
+    ["Teaching, Learning & LMS","finalized",2],
+    ["Data, Analytics & Reporting","edits-in",2],
+    ["IT Infrastructure & Cloud","finalized",2],
+    ["Information Security","sent",2],
+    ["IT Governance & Strategy","drafting",1]
+  ];
+  /* Synthetic role-only records: no fabricated personal identities. */
+  var INTERVIEWS=[
+    ["Role only","VP Finance & CFO","Finance & ERP","finalized"], ["Role only","Controller","Finance & ERP","finalized"], ["Role only","Budget Director","Finance & ERP","finalized"],
+    ["Role only","Chief HR Officer","Human Resources & Payroll","finalized"], ["Role only","Payroll Manager","Human Resources & Payroll","finalized"],
+    ["Role only","Registrar","Student Information System","finalized"], ["Role only","Director of Admissions","Student Information System","finalized"],
+    ["Role only","VP Advancement","Advancement & CRM","finalized"], ["Role only","Annual Giving Director","Advancement & CRM","finalized"],
+    ["Role only","Provost designee","Teaching, Learning & LMS","finalized"], ["Role only","Director of Ed Tech","Teaching, Learning & LMS","finalized"],
+    ["Role only","Director of Institutional Research","Data, Analytics & Reporting","edits-in"], ["Role only","BI / Data Warehouse Lead","Data, Analytics & Reporting","conducted"],
+    ["Role only","Director of Infrastructure","IT Infrastructure & Cloud","finalized"], ["Role only","Cloud Architect","IT Infrastructure & Cloud","finalized"],
+    ["Role only","CISO","Information Security","sent"], ["Role only","IT Security Analyst","Information Security","sent"], ["Role only","CIO","IT Governance & Strategy","conducted"]
+  ];
+  /* budgetary estimate — ILLUSTRATIVE demo figures ($M); rows tie out to totals */
+  var BUDGET=[
+    ["Cloud ERP (Finance & HCM)",4.2,1.6,12.2],
+    ["Modern SIS",3.1,1.1,8.6],
+    ["Integration & data platform",1.4,0.4,3.4],
+    ["Change management & training",1.8,0.2,2.8]
+  ];
+  var BUDGET_TOTAL=["Total program",10.5,3.3,27.0];
+  /* readiness scores per domain (0-5) — current-state maturity */
+  var MATURITY=[
+    ["Finance & ERP",2.1],["HR & Payroll",2.4],["SIS",2.8],["Advancement & CRM",3.1],
+    ["Teaching & LMS",3.6],["Data & Analytics",2.2],["Infrastructure & Cloud",3.3],
+    ["Information Security",2.6],["Governance & Strategy",2.0]
+  ];
+
+  var PHASES=[
+    {t:"Initiate & set up the engagement", meta:"Steps 1–8 · contract to internal alignment", status:"done", steps:[
+      {n:"01 · Signed contract received from SA or Leadership by email",s:"done",ty:"Trigger"}, {n:"02 · PM determines the assessment type from the contract",s:"done",ty:"Human"},
+      {n:"03 · PM selects analysts/team and gets Leadership confirmation",s:"done",ty:"Human gate"}, {n:"04 · PM creates the engagement Teams chat",s:"done",ty:"Update"},
+      {n:"05 · PM moves template folders into the SharePoint account folder",s:"done",ty:"Update"}, {n:"06 · PM adds the project to QB Time",s:"done",ty:"Update"},
+      {n:"07 · PM schedules internal alignment within one week",s:"done",ty:"Output"}, {n:"08 · Team aligns on timeline, project plan, roles, and contract",s:"done",ty:"Human"}
+    ]},
+    {t:"Client alignment & scheduling", meta:"Steps 9–18 · POC intro to milestones set", status:"done", steps:[
+      {n:"09 · PM receives the client POC introduction",s:"done",ty:"Retrieve"}, {n:"10 · Lead Analyst prepares client alignment deck and information-request email",s:"done",ty:"AI draft"},
+      {n:"11 · PM reviews and sends the information-request email",s:"done",ty:"Output"}, {n:"12 · Analyst and PM organize project documents in SharePoint",s:"done",ty:"Update"},
+      {n:"13 · PM creates the Taskray project from the project plan",s:"done",ty:"Update"}, {n:"14 · PM confirms interview count and interviewee list",s:"done",ty:"Retrieve"},
+      {n:"15 · PM schedules Leadership Discussion and Participant Kickoff",s:"done",ty:"Output"}, {n:"16 · Analysts add Calendly links to the contact tracker",s:"done",ty:"Update"},
+      {n:"17 · Client self-schedules interviews; bookings reach PM Outlook",s:"done",ty:"Human"}, {n:"18 · PM schedules Market, Draft, Budget, and Final milestones",s:"done",ty:"Output"}
+    ]},
+    {t:"Kickoff & interviews", meta:"Steps 19–25 · the interview loop + completeness gate", status:"done", steps:[
+      {n:"19 · Team holds the Leadership Discussion and Participant Kickoff",s:"done",ty:"Human"}, {n:"20 · Lead Analyst conducts each client interview",s:"done",ty:"Human"},
+      {n:"21 · Lead Analyst reviews the AI draft and writes each section report",s:"done",ty:"AI draft"}, {n:"22 · PM sends each report for five-business-day interviewee edits",s:"done",ty:"Output"},
+      {n:"23 · PM receives edited reports and files them in SharePoint",s:"done",ty:"Retrieve"}, {n:"24 · Gate: are all interviews conducted and reports returned?",s:"done",ty:"Decision"},
+      {n:"25 · Lead Analyst confirms and finalizes section reports",s:"done",ty:"Human"}
+    ]},
+    {t:"Report & client reviews", meta:"Steps 26–30 · full report + 3 client meetings", status:"active", steps:[
+      {n:"26 · Lead Analyst writes the full report from all approved sources",s:"done",ty:"AI draft"}, {n:"27 · Team holds the 90-minute Market Overview Presentation",s:"done",ty:"Human"},
+      {n:"28 · Team holds the client Draft Review and captures edits",s:"done",ty:"Human"}, {n:"29 · Team holds the Budgetary Estimate Discussion",s:"active",ty:"Human"},
+      {n:"30 · Lead Analyst prepares the Final Presentation with agreed edits",s:"active",ty:"AI draft"}
+    ]},
+    {t:"Deliver & close", meta:"Steps 31–33 · final presentation to archive", status:"gate", steps:[
+      {n:"31 · Team holds the Final Presentation with the client",s:"gate",ty:"Human gate"},
+      {n:"32 · PM delivers Final Report, Budget, Section Reports, and appendices",s:"locked",ty:"Output"},
+      {n:"33 · PM marks complete and archives in Taskray and QB Time",s:"locked",ty:"Output"}
+    ]}
+  ];
+
+  var REPORT_TOC=[
+    ["ES","Executive Summary"],["1","Engagement Overview & Methodology"],["2","Institutional Context"],
+    ["3","Current-State Assessment (by domain)"],["4","Market Overview & Peer Benchmarking"],
+    ["5","Findings & Recommendations"],["6","Roadmap & Prioritization"],["7","Budgetary Estimate"],
+    ["A","Appendix A: Section Reports"],["B","Appendix B: Interview List"]
+  ];
+  var REPORT_BODY={
+    "ES":["<h2>Executive Summary</h2>","Demo State University engaged MGT / Tambellini to conduct an enterprise technology assessment focused on ERP and student-system modernization. Across <strong>18 interviews spanning nine functional domains</strong>, a consistent picture emerged: aging, heavily customized on-premises systems, fragmented data, and manual workarounds that constrain the institution's strategic goals.","We recommend a phased modernization anchored on a <strong>cloud ERP (Finance &amp; HCM)</strong> and a <strong>modern SIS</strong>, sequenced to manage risk and cost. The estimated five-year program cost is approximately <strong>$27.0M</strong> (see Budgetary Estimate). Overall current-state technology maturity averages <strong>2.7 of 5</strong>, with the lowest scores in Governance, Finance/ERP, and Data &amp; Analytics."],
+    "1":["<h2>1. Engagement Overview &amp; Methodology</h2>","This assessment followed an interview-driven discovery methodology. The team conducted structured interviews with functional and technical leaders, reviewed information-request materials and organizational charts, and benchmarked findings against sector peers and market research.","Each interview produced a <strong>section report</strong>, reviewed and edited by the interviewee, then synthesized into this assessment. The methodology emphasizes traceability — every finding maps back to interview evidence and supporting documentation."],
+    "2":["<h2>2. Institutional Context</h2>","Demo State University is a mid-size public institution serving roughly 18,500 students. Its core administrative systems were implemented over 15 years ago and have been extensively customized, raising cost of ownership and impeding upgrades. Leadership has set strategic priorities around student success, data-informed decision-making, and operational efficiency — each dependent on modern, integrated systems."],
+    "3":["<h2>3. Current-State Assessment</h2>","The current state is assessed across nine domains: Finance &amp; ERP, HR &amp; Payroll, Student Information System, Advancement &amp; CRM, Teaching/Learning &amp; LMS, Data/Analytics &amp; Reporting, IT Infrastructure &amp; Cloud, Information Security, and IT Governance &amp; Strategy. Each domain section summarizes strengths, gaps, risks, and stakeholder priorities drawn from the section reports."],
+    "4":["<h2>4. Market Overview &amp; Peer Benchmarking</h2>","The higher-education administrative software market is consolidating around cloud-native ERP and SIS platforms. This section reviews the leading solutions, adoption trends among peer institutions, and the implications for Demo State University's selection and sequencing decisions. Benchmarking draws on Tambellini's higher-ed technology research and its <strong>Education Institution Technology Profile Database</strong> — 100,000+ technology selections across 21,000+ institutions — the industry's deepest source of peer-selection evidence."],
+    "5":["<h2>5. Findings &amp; Recommendations</h2>","Twelve prioritized findings are presented, each with a recommendation, rationale, and stakeholder impact. Headline recommendations: (1) adopt a cloud ERP for Finance &amp; HCM; (2) modernize the SIS; (3) establish an integration &amp; data platform; (4) stand up formal IT governance; and (5) invest in change management and training to protect adoption."],
+    "6":["<h2>6. Roadmap &amp; Prioritization</h2>","A three-wave, multi-year roadmap sequences the modernization to manage risk, cash flow, and organizational change capacity. Wave 1 establishes governance, the data platform, and Finance/HCM; Wave 2 modernizes the SIS; Wave 3 addresses CRM, analytics, and optimization."],
+    "7":["<h2>7. Budgetary Estimate</h2>","The budgetary estimate provides planning-level cost ranges for the recommended program — one-time implementation, recurring annual subscription, and five-year total cost of ownership by component. Figures are planning-level and should be refined through formal procurement. See the Budgetary Estimate screen for the full table."],
+    "A":["<h2>Appendix A: Section Reports</h2>","The nine domain section reports are included verbatim as reviewed and approved by interviewees. Each was AI-drafted from interview notes, edited by the interviewee, and finalized by the analyst."],
+    "B":["<h2>Appendix B: Interview List</h2>","A record of all 18 interviews conducted — participant, role, domain, and date — supporting the traceability of every finding to its evidence."]
+  };
+  var DECK=["Title — Demo State University Technology Assessment","Engagement Objectives","Methodology & Approach","Interview Coverage (18 / 9 domains)","Institutional Context","Current-State Maturity Heatmap","Finance & ERP Findings","HR & Payroll Findings","Student Information System Findings","Advancement & CRM Findings","Data & Analytics Findings","Infrastructure, Cloud & Security","IT Governance & Strategy","Market Overview & Peer Benchmarking","Key Findings Summary","Recommendations","Modernization Roadmap (3 Waves)","Budgetary Estimate (5-yr TCO)","Risks & Dependencies","Next Steps"];
+
+  var NAV=[
+    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"],["inputs","Evidence Intake","M4 4h16v16H4zM8 8h8M8 12h8M8 16h5","15 files","ok"]]},
+    {g:"Run the engagement", items:[
+      ["process","Process",  "M4 6h16M4 12h16M4 18h10", "Phase 4/5"],
+      ["setup","Setup & Alignment","M14 3v5h5M6 3h9l5 5v13H6z"],
+      ["interviews","Interviews","M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"],
+      ["reports","Section Reports","M4 19V5m0 14h16M8 15l3-4 3 3 4-6"],
+      ["deliver","Deliverables","M6 2h9l5 5v15H6z"]
+    ]},
+    {g:"Product", items:[
+      ["evals","Evals & Quality","M4 19V5m4 14v-7m4 7V9m4 10v-4m4 4V7"],
+      ["feedback","Feedback","M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"]
+    ]}
+  ];
+
+  /* ---------------- helpers ---------------- */
+  function fmt(n){return n.toLocaleString("en-US");}
+  function money(m){return "$"+m.toFixed(1)+"M";}
+  function statChip(status){
+    var m={done:["ok","Complete"],active:["brand","In progress"],gate:["warn","Awaiting sign-off"],locked:["","Locked"]};
+    var v=m[status]||["","–"]; return '<span class="chip '+v[0]+'"><span class="cdot"></span>'+v[1]+'</span>';
+  }
+  var SRCLABEL="Apollo drives";
+  function srcChip(s){ if(!s)return ''; var d=/Apollo/.test(s); return '<span class="chip'+(d?' brand':'')+'" style="margin-right:8px'+(d?'':';background:var(--surface-3);color:var(--muted)')+'">'+s+'</span>'; }
+
+  /* ---------------- feedback ---------------- */
+  function fbWidget(where){
+    var w=el("div","fb");
+    var up=el("button","up",'👍'), dn=el("button","down",'👎');
+    up.title="This was helpful"; dn.title="This needs work";
+    up.onclick=function(){ up.classList.add("on"); dn.classList.remove("on"); logFb(where,"up",""); toast("Thanks — logged as helpful"); };
+    dn.onclick=function(){ dn.classList.add("on"); up.classList.remove("on");
+      var c=prompt("What should improve on “"+where+"”?"); logFb(where,"down",c||""); toast("Thanks — sent to the team"); };
+    w.appendChild(up); w.appendChild(dn); return w;
+  }
+  function logFb(where,dir,note){ STATE.feedback.unshift({where:where,dir:dir,note:note,who:STATE.first+" "+STATE.last,role:STATE.role,when:"just now"}); }
+  var toastT;
+  function toast(msg){ var t=$("#toastEl"); if(!t){t=el("div"); t.id="toastEl"; t.style.cssText="position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:9px 15px;border-radius:9px;font-size:13px;z-index:90;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:opacity .2s"; document.getElementById("app").appendChild(t);} t.textContent=msg; t.style.opacity="1"; clearTimeout(toastT); toastT=setTimeout(function(){t.style.opacity="0";},1900); }
+
+  /* ---------------- view header ---------------- */
+  function head(title, sub, actionsHtml){
+    var h=el("div","view-head");
+    h.innerHTML='<div><h1>'+title+'</h1><div class="vh-sub">'+sub+'</div></div><div class="vh-actions"></div>';
+    var a=$(".vh-actions",h);
+    a.appendChild(fbWidget(title));
+    if(actionsHtml){ var w=el("span",null,actionsHtml); a.appendChild(w); }
+    return h;
+  }
+  function howto(txt){ return '<div class="howto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><div>'+txt+'</div></div>'; }
+  function pnote(t){ var d=el("div","card"); d.style.marginTop="14px"; d.innerHTML='<div style="font-size:13px;color:var(--muted);line-height:1.6">'+t+'</div>'; return d; }
+
+  /* ======================================================= VIEWS ======================================================= */
+  var VIEWS={};
+
+  VIEWS.home=function(){
+    var m=el("div");
+    m.appendChild(head("Hey "+STATE.first+" 👋","Here's where the <strong>Demo State University</strong> technology assessment stands. Pick up at the highlighted step, or jump anywhere from the left."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>What Apollo does:</strong> it runs the whole assessment engagement <em>and</em> drafts every deliverable. It stands up the project, orchestrates interviews, <strong>AI-drafts each section report from the interview notes</strong>, assembles the full assessment report, budgetary estimate and executive presentation — and a human approves at every gate."));
+    var s3=el("div"); s3.style.margin="0 0 18px";
+    s3.innerHTML='<div class="eyebrow" style="margin-bottom:8px">New here? Apollo in 3 steps</div><div class="steps3">'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">1</span><strong style="font-size:13px">Kick off the engagement</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">Apollo reads the contract, stands up the project, and schedules interviews &amp; milestones.</div></div>'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">2</span><strong style="font-size:13px">Run interviews → reports</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">After each interview it drafts the section report; interviewees review and edit.</div></div>'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">3</span><strong style="font-size:13px">Assemble &amp; deliver</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">It builds the final report, budgetary estimate &amp; deck — you review and approve.</div></div></div>';
+    m.appendChild(s3);
+
+    var g=el("div","grid"); g.style.gridTemplateColumns="repeat(auto-fit,minmax(200px,1fr))";
+    var kpis=[["Interviews","18 / 18","across 9 domains · all conducted"],
+              ["Section reports","16 final","<span class='trend-up'>▲</span> 2 in review · 0 drafting-only"],
+              ["Baseline effort","96.6 hrs","per engagement (manifest)"],
+              ["Est. analyst time saved","~46 hrs","AI-drafted reports + assembly"]];
+    kpis.forEach(function(k){ var c=el("div","card stat"); c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>'; g.appendChild(c); });
+    m.appendChild(g);
+
+    var row=el("div","grid"); row.style.gridTemplateColumns="1.3fr 1fr"; row.style.marginTop="14px";
+    var p=el("div","card");
+    p.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Engagement progress</h3>'+statChip("active")+'</div><div class="card-sub">Phase 4 of 5 — Report &amp; client reviews</div>';
+    var pr=el("div"); pr.style.cssText="display:flex;gap:20px;align-items:center;margin-top:14px";
+    pr.innerHTML=ring(82)+'<div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:8px">Next up</div>'+
+      '<div class="step active" style="border:none;padding:4px 0"><span class="sdot"></span> Budgetary Estimate Discussion — prepping</div>'+
+      '<div class="step gate" style="border-top:1px solid var(--hairline-2);padding:8px 0"><span class="sdot"></span> PM final review &amp; approval of deliverables</div>'+
+      '<button class="btn primary sm" style="margin-top:10px" data-go="deliver">Go to deliverables →</button></div>';
+    p.appendChild(pr); row.appendChild(p);
+    var pc=el("div","card");
+    pc.innerHTML='<h3>Demo State University</h3><div class="card-sub">ERP Modernization Assessment · confidential</div>'+
+      '<div style="margin-top:12px;display:flex;flex-direction:column;gap:9px;font-size:13px">'+
+      row2("Assessment type","Enterprise technology / ERP")+
+      row2("Domains","9 (Finance, HR, SIS, CRM, LMS…)")+
+      row2("PM","Kelser M.")+
+      row2("Deliverables","Report · Budget · Deck · Sections")+
+      row2("Confidentiality","NDA · IP-protected")+'</div>';
+    row.appendChild(pc);
+    m.appendChild(row);
+    return m;
+  };
+  function row2(k,v){return '<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--muted)">'+k+'</span><span style="font-weight:600;text-align:right">'+v+'</span></div>';}
+  function ring(p){ var r=52,c=2*Math.PI*r, off=c*(1-p/100);
+    return '<div class="prog-ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="var(--hairline)" stroke-width="10"/><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="var(--brand)" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'"/></svg><div class="pt">'+p+'%</div></div>';
+  }
+
+  VIEWS.inputs=function(){
+    var m=el("div");
+    m.appendChild(head("Evidence Intake","Every supplied file is inventoried before it can affect an assessment. The process map controls workflow; companion files add evidence, validation rules, and output guidance."));
+    m.insertAdjacentHTML("beforeend",howto("<strong>Privacy and isolation:</strong> raw student names, IDs, addresses, and other PII stay local and never enter this browser artifact or an AI prompt. Unsupported or cross-domain files remain visible but quarantined from findings."));
+    var g=el("div","grid");g.style.gridTemplateColumns="repeat(auto-fit,minmax(190px,1fr))";
+    [["Logical files","15","15 parsed · none silently dropped"],["Workflow authority","1 SVG","exact 33-step assessment map"],["Supporting references","2 PDFs","accepted as assessment context"],["Cross-domain packages","12 files","readable · quarantined from generation"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>';g.appendChild(c);});m.appendChild(g);
+    var c=el("div","card");c.style.marginTop="14px";c.innerHTML='<h3>Source disposition</h3><div class="card-sub">The status determines whether a file may support client-facing claims</div>';
+    c.appendChild(tableEl(["Source","Role","Status","Use in Apollo"],[
+      ["Assessments-process-map-basic.svg","Workflow spine",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Defines all 33 steps and gates"],
+      ["Assessments_final_manifest_v1.pdf","Manifest",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Confirms entities, connections, and pain points"],
+      ["Billable Assessment Process (1).pdf","Supporting process context",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Informs setup, outputs, and human review"],
+      ["AlvordUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests PII, multi-file intake, and domain isolation only"],
+      ["PleasantonUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests malformed XLSX recovery and draft/final precedence only"]
+    ],[false,false,false,false]));m.appendChild(c);
+    var p=el("div","card");p.style.marginTop="14px";p.style.borderLeft="4px solid var(--warn)";p.innerHTML='<h3>Conflict handling</h3><p class="doc-p">Pleasanton contains a stale December workbook marked <strong>DRAFT</strong> and later January/final sources. Apollo records that lineage, does not silently blend versions, and requires explicit review before any supported-domain evidence advances.</p><p class="doc-p"><strong>Parser safeguard:</strong> a workbook that declares dimension A1 but contains 13,084 rows must be recovered from sheet data, never truncated to one cell.</p>';m.appendChild(p);
+    return m;
+  };
+
+  VIEWS.process=function(){
+    var m=el("div");
+    m.appendChild(head("Process","The 33-step Assessments engagement, folded into 5 phases with the real human sign-off gates. Click a phase to expand; approve a gate to advance."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>Legend:</strong> ✓ complete · ● in progress · ◕ awaiting a human sign-off (gate). Apollo prepares everything and waits at each gate — it never auto-approves a decision the PM or client owns."));
+    m.insertAdjacentHTML("beforeend",'<div class="card" style="border-left:4px solid var(--brand);margin-bottom:14px"><div style="font-size:13px;line-height:1.55"><strong>Apollo drives the whole engagement.</strong> It automates project setup and scheduling, <strong>AI-drafts</strong> the info-request email, section reports, full assessment report, budgetary estimate and executive deck, and <strong>tracks the interview loop and every gate</strong>. Human judgment stays where it belongs — the interviews themselves, the client meetings, and the PM/Leadership approvals — all tagged below.</div></div>');
+    PHASES.forEach(function(ph,i){
+      var d=el("div","phase "+ph.status+(i===3?" open":"")+" apollo");
+      var icon = ph.status==="done"?"✓":(i+1);
+      d.innerHTML='<div class="phase-head"><div class="phase-idx">'+icon+'</div><div style="flex:1"><div class="phase-title">'+ph.t+'</div><div class="phase-meta">'+ph.meta+'</div></div>'+srcChip("Apollo drives")+statChip(ph.status)+'<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="margin-left:8px"><path d="M6 9l6 6 6-6"/></svg></div>';
+      var body=el("div","phase-body");
+      ph.steps.forEach(function(s){
+        var st=el("div","step "+s.s);
+        var gateBtn = (s.s==="gate" && STATE.role==="Project Manager") ? '<button class="btn primary sm" data-gate="'+ph.t+'">Approve &amp; continue</button>' : '<span class="chip '+(s.s==="gate"?"warn":s.s==="done"?"ok":s.s==="active"?"brand":"")+'">'+s.ty+'</span>';
+        st.innerHTML='<span class="sdot"></span><span>'+s.n+'</span><span class="stype">'+gateBtn+'</span>';
+        body.appendChild(st);
+      });
+      d.appendChild(body);
+      $(".phase-head",d).onclick=function(e){ if(e.target.closest("[data-gate]"))return; d.classList.toggle("open"); };
+      m.appendChild(d);
+    });
+    return m;
+  };
+
+  VIEWS.setup=function(){
+    var m=el("div");
+    m.appendChild(head("Setup & Alignment","The engagement's first eight steps — the administrative setup that Apollo automates, plus the alignment work it drafts."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>Pain point killed:</strong> today the PM manually creates the Teams chat, moves SharePoint template folders, adds the project to QB Time, and spins up Taskray — four systems, by hand, at every kickoff. Apollo does this in one click from the signed contract."));
+    var g=el("div","grid"); g.style.gridTemplateColumns="1fr 1fr";
+    var c1=el("div","card"); c1.innerHTML='<h3>Auto-provisioned</h3><div class="card-sub">One click from the signed contract</div>';
+    var list=el("div"); list.style.marginTop="10px";
+    [["Project Teams chat created","Microsoft Teams"],["Template folders → account folder","SharePoint"],["Project added for time tracking","QB Time"],["Project created from the plan","Taskray"],["Internal alignment meeting scheduled","Outlook · within 1 week"]].forEach(function(ck){
+      var r=el("div"); r.style.cssText="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--hairline-2);font-size:13px";
+      r.innerHTML='<span class="chip ok"><span class="cdot"></span></span><span style="flex:1">'+ck[0]+'</span><span style="color:var(--muted);font-size:12px">'+ck[1]+'</span>'; list.appendChild(r); });
+    c1.appendChild(list); g.appendChild(c1);
+
+    var c2=el("div","card"); c2.innerHTML='<h3>AI-drafted for the client</h3><div class="card-sub">Analyst reviews, then it goes out</div>';
+    var d2=el("div"); d2.style.marginTop="10px";
+    [["Assessment type classified","from the contract — “Enterprise technology / ERP”","ok"],["Client alignment presentation","timeline · roles · goals · process overview","ok"],["Information-request email","tailored to the assessment type & domains","ok"],["Contact tracker prepared","interviewees, domains, Calendly links","ok"]].forEach(function(ck){
+      var r=el("div"); r.style.cssText="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-top:1px solid var(--hairline-2);font-size:13px";
+      r.innerHTML='<span class="chip '+ck[2]+'"><span class="cdot"></span></span><div style="flex:1"><div style="font-weight:600">'+ck[0]+'</div><div style="color:var(--muted);font-size:12px">'+ck[1]+'</div></div>'; d2.appendChild(r); });
+    c2.appendChild(d2); g.appendChild(c2);
+    m.appendChild(g);
+
+    var email=el("div","card"); email.style.marginTop="14px";
+    email.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Information-request email — AI draft</h3><span class="chip brand"><span class="cdot"></span>Draft · awaiting analyst review</span></div>'+
+      '<div class="draft-note"><strong>What “AI-generated draft” means</strong>This is a proposed starting document assembled only from named project sources. It is not verified, approved, final, or sent automatically. Review the sources and missing inputs, edit the text, then explicitly approve before sending.</div>'+
+      '<div style="font-size:12px;color:var(--muted);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px"><div><strong>Sources:</strong> signed contract; approved assessment domains</div><div><strong>Missing:</strong> client sponsor; due date</div><div><strong>Reviewer:</strong> Lead Analyst</div><div><strong>Status:</strong> <span id="emailState">needs review</span></div></div>'+
+      '<div style="margin-top:12px;border:1px solid var(--hairline);border-radius:10px;padding:16px;font-size:13px;line-height:1.65;color:var(--ink);max-width:74ch">'+
+      '<div style="color:var(--muted);font-size:12px;margin-bottom:8px">To: DSU project sponsor &nbsp;·&nbsp; Subject: Demo State University Technology Assessment — Information Request</div>'+
+      'Dear [Sponsor],<br><br>Thank you for partnering with us on your enterprise technology assessment. To prepare for our upcoming interviews, we would be grateful for the following by [date]: current organizational charts for IT and each administrative unit; an inventory of core systems (Finance/ERP, HR/Payroll, SIS, CRM, LMS) with versions and contract dates; recent strategic-plan and IT-governance documents; and any prior assessments or roadmaps.<br><br>We have included a contact tracker with self-scheduling links so participants can book their interviews directly. Please let us know if any names should be added.<br><br>Warm regards,<br>The MGT · Tambellini Assessment Team</div>'+
+      '<div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary sm" id="apprEmail">Approve &amp; send</button><button class="btn sm" id="editEmail">Edit draft</button></div>';
+    m.appendChild(email);
+    setTimeout(function(){
+      var send=$("#apprEmail"), edit=$("#editEmail"), body=$("#editEmail").parentNode.previousElementSibling;
+      if(edit)edit.onclick=function(){body.contentEditable=body.contentEditable!=="true"?"true":"false";edit.textContent=body.contentEditable==="true"?"Save edits":"Edit draft";if(body.contentEditable==="true")body.focus();else{STATE.emailStatus="changes requested";$("#emailState").textContent=STATE.emailStatus;toast("Draft edits saved for analyst review");}};
+      if(send)send.onclick=function(){
+        if(/\[(Sponsor|date)\]/i.test(body.textContent)){STATE.emailStatus="blocked — missing sponsor or due date";$("#emailState").textContent=STATE.emailStatus;toast("Not sent — replace [Sponsor] and [date] first");return;}
+        STATE.emailStatus="sent after human approval";$("#emailState").textContent=STATE.emailStatus;send.disabled=true;send.textContent="Sent";toast("Human-approved information request sent");
+      };
+    },0);
+    return m;
+  };
+
+  VIEWS.interviews=function(){
+    var m=el("div");
+    m.appendChild(head("Interviews","The interview loop — the heart of the engagement. Apollo tracks scheduling, drafts a section report after each interview, and manages the 5-business-day interviewee review before the completeness gate."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>The loop &amp; the gate:</strong> interview → AI-drafted section report → interviewee edits (5 business days; a one-day reminder fires automatically) → analyst finalizes. The engagement can't advance to report-writing until <em>every</em> interview and section report is complete — Apollo holds that gate."));
+
+    var g=el("div","grid"); g.style.gridTemplateColumns="repeat(auto-fit,minmax(180px,1fr))";
+    [["Interviews conducted","18 / 18","100%"],["Section reports finalized","16","of 18"],["Awaiting interviewee edits","2","within the 5-day window"],["Completeness gate","2 to go","not yet met"]].forEach(function(k){ var c=el("div","card stat"); c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>'; g.appendChild(c); });
+    m.appendChild(g);
+
+    var t=el("div","card"); t.style.marginTop="14px"; t.innerHTML='<h3>Contact tracker &amp; section-report status</h3><div class="card-sub">18 interviews across 9 domains · self-scheduled via Calendly · statuses update as reports move</div>';
+    var rows=INTERVIEWS.map(function(r){ return [r[0],r[1],r[2],reportChip(r[3])]; });
+    t.appendChild(tableEl(["Interviewee","Role","Domain","Section report"],rows,[false,false,false,false]));
+    m.appendChild(t);
+
+    var gate=el("div","card"); gate.style.marginTop="14px"; gate.style.borderLeft="4px solid var(--warn)";
+    gate.innerHTML='<div style="display:flex;gap:10px;align-items:center;font-size:13px"><span class="chip warn"><span class="cdot"></span>Gate not met</span><span style="color:var(--muted)">2 section reports still out for interviewee edits (Data &amp; Analytics, Information Security). Apollo has sent the automatic reminders; report writing stays gated until both return or the 5-day window lapses (then flagged as-is).</span></div>';
+    m.appendChild(gate);
+    return m;
+  };
+  function reportChip(s){
+    var m={finalized:["ok","Finalized"],"edits-in":["brand","Edits received"],sent:["warn","Out for edits"],conducted:["","Report drafting"],drafting:["","Report drafting"]};
+    var v=m[s]||["","–"]; return '<span class="chip '+v[0]+'"><span class="cdot"></span>'+v[1]+'</span>';
+  }
+
+  VIEWS.reports=function(){
+    var m=el("div");
+    m.appendChild(head("Section Reports","One report per interview, AI-drafted from the interview notes, reviewed by the interviewee, and finalized by the analyst — the building blocks of the full assessment."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>How a section report is made:</strong> Apollo drafts from the interview notes in MGT / Tambellini's voice and structure, the interviewee edits for accuracy, and the analyst finalizes. Every claim traces back to interview evidence — nothing is invented."));
+    var tabs=tabbar(DOMAINS.slice(0,5).map(function(d,i){return ["d"+i,d[0].replace(/ &.*/,"")]; }));
+    m.appendChild(tabs.bar);
+    DOMAINS.slice(0,5).forEach(function(d,i){
+      var p=tabs.pane("d"+i); if(i===0)p.classList.add("active");
+      var c=el("div","card");
+      c.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>'+d[0]+'</h3>'+reportChip(d[1])+'</div><div class="card-sub">'+d[2]+' interview(s) · AI-drafted → interviewee-reviewed → analyst-finalized</div>'+
+        '<p class="doc-p"><strong>Current state.</strong> '+SECTION_TEXT[i][0]+'</p>'+
+        '<p class="doc-p"><strong>Key findings.</strong> '+SECTION_TEXT[i][1]+'</p>'+
+        '<p class="doc-p"><strong>Recommendation.</strong> '+SECTION_TEXT[i][2]+'</p>';
+      var dl=el("div"); dl.style.cssText="margin-top:6px;display:flex;gap:8px;align-items:center";
+      dl.innerHTML='<span class="chip brand">Section Report · '+d[0]+'</span>';
+      p.appendChild(c); p.appendChild(dl);
+    });
+    return m;
+  };
+  var SECTION_TEXT=[
+    ["Finance runs on a heavily customized on-premises ERP implemented 15+ years ago; month-end close is largely manual and spreadsheet-driven.","Reconciliations take 8–10 business days; 40+ custom reports are maintained by two staff; no self-service budgeting for departments.","Adopt a cloud ERP for Finance &amp; HCM with a phased chart-of-accounts redesign; prioritize automated close and self-service budget reporting."],
+    ["HR and Payroll share the legacy ERP; onboarding and benefits changes require paper forms routed by email.","Position management is duplicated across systems; payroll corrections are frequent; limited manager self-service.","Move HCM to the cloud ERP alongside Finance; standardize position management and enable employee/manager self-service."],
+    ["The SIS is stable but dated; degree audit and registration workflows rely on customizations and staff intervention.","Students report friction at registration peaks; advising lacks integrated data; APIs are limited.","Modernize the SIS in Wave 2, after the ERP and data platform are established, to reduce concurrent change risk."],
+    ["Advancement uses a mid-market CRM disconnected from the ERP; gift data is re-keyed for finance reconciliation.","No single donor view; event and annual-giving data live in silos; reporting is manual.","Integrate CRM with the new data platform; defer full CRM replacement to Wave 3 pending ERP stabilization."],
+    ["The LMS is modern and well-adopted; the main gaps are integration and analytics rather than the platform itself.","Learning data isn't surfaced to advisors; SSO and roster sync are partial; strong faculty satisfaction overall.","Retain the LMS; invest in integration and learning analytics rather than replacement."]
+  ];
+
+  VIEWS.deliver=function(){
+    var m=el("div");
+    m.appendChild(head("Deliverables","The client-ready artifacts — Final Report, Budgetary Estimate, and Executive Presentation — assembled from the finalized section reports. Modeled on MGT / Tambellini's real deliverable set."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>★ This is what Apollo assembles.</strong> The full assessment report (.docx), the budgetary estimate, and the executive deck (.pptx) — built from the finalized section reports and findings. Narrative is AI-drafted to the house template and voice; every number and finding traces to evidence; a human approves before anything reaches the client."));
+    var tabs=tabbar([["report","Final Report (.docx)"],["budget","Budgetary Estimate"],["deck","Presentation (.pptx)"]]);
+    m.appendChild(tabs.bar);
+
+    // report
+    var rp=tabs.pane("report"); rp.classList.add("active");
+    var shell=el("div","report-shell");
+    var toc=el("div","report-toc");
+    var page=el("div","report-page");
+    function showSec(k){ $$(".toc-item",toc).forEach(function(x){x.classList.toggle("active",x.dataset.k===k);}); page.innerHTML=(REPORT_BODY[k]||["<h2>Section</h2>"]).map(function(t,i){return i===0?t:'<p class="doc-p">'+t+'</p>';}).join(""); }
+    REPORT_TOC.forEach(function(s){ var it=el("div","toc-item"); it.dataset.k=s[0]; it.innerHTML='<span class="tnum">'+s[0]+'</span> '+s[1]; it.onclick=function(){showSec(s[0]);}; toc.appendChild(it); });
+    shell.appendChild(toc); shell.appendChild(page); rp.appendChild(shell); showSec("ES");
+    var dl=el("div"); dl.style.cssText="margin-top:12px;display:flex;gap:8px;align-items:center";
+    dl.innerHTML='<span class="chip brand">Final Assessment Report</span>';
+    var b=el("button","btn primary sm",'Assemble report'); b.onclick=function(){toast("Report assembled from finalized section reports");}; dl.appendChild(b);
+    rp.appendChild(dl);
+
+    // budget
+    var bd=tabs.pane("budget");
+    var bc=el("div","card"); bc.innerHTML='<h3>Budgetary Estimate — 5-year TCO</h3><div class="card-sub">Planning-level cost ranges by component · refine through formal procurement</div>';
+    var brows=BUDGET.map(function(r){return [r[0],money(r[1]),money(r[2]),money(r[3])];});
+    brows.push(['<strong>'+BUDGET_TOTAL[0]+'</strong>','<strong>'+money(BUDGET_TOTAL[1])+'</strong>','<strong>'+money(BUDGET_TOTAL[2])+'</strong>','<strong>'+money(BUDGET_TOTAL[3])+'</strong>']);
+    bc.appendChild(tableEl(["Component","One-time impl.","Annual subscription","5-yr TCO"],brows,[false,true,true,true]));
+    bd.appendChild(bc);
+    bd.appendChild(reconInline("Rows tie out: implementation Σ = $10.5M, annual Σ = $3.3M, 5-yr TCO = impl + 5×annual = $27.0M. Apollo checks every total before the estimate is shown."));
+    bd.insertAdjacentHTML("beforeend",'<div style="margin-top:10px;font-size:11.5px;color:var(--muted)">Illustrative figures for the Demo State University worked example — not a real quote. Real engagements load client-specific pricing.</div>');
+
+    // deck
+    var dk=tabs.pane("deck");
+    var sg=el("div","slide-grid");
+    DECK.forEach(function(t,i){ var s=el("div","slide"); s.innerHTML='<div class="sthumb"><span class="snum">'+(i+1)+'</span>'+(i===0?'<strong style="color:var(--ink);font-size:12px">Demo State U</strong>':(/Heatmap|Maturity|Roadmap|Estimate/.test(t)?'▦':'▤'))+'</div><div class="scap">'+t+'</div>'; sg.appendChild(s); });
+    dk.appendChild(sg);
+    dk.insertAdjacentHTML("beforeend",'<div style="margin-top:12px;font-size:12px;color:var(--muted)">20-slide executive presentation · assembled from findings &amp; recommendations · analyst-reviewed</div>');
+    return m;
+  };
+  function reconInline(t){ var d=el("div","card"); d.style.marginTop="14px"; d.style.borderColor="var(--ok)"; d.innerHTML='<div style="display:flex;gap:10px;align-items:center;font-size:13px"><span class="chip ok"><span class="cdot"></span>Checked</span><span style="color:var(--muted)">'+t+'</span></div>'; return d; }
+
+  VIEWS.evals=function(){
+    var m=el("div");
+    m.appendChild(head("Evals & Quality","Every build is measured before it's trusted. Here's how Apollo scores on the Demo State University engagement — the goal is zero unsupported claims and consistent, on-voice deliverables."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>The north star:</strong> <em>every finding traces to interview evidence, and no number reaches a client unchecked.</em> AI-drafted prose is graded for fidelity to the section reports; the human analyst always approves."));
+    var g=el("div","grid"); g.style.gridTemplateColumns="repeat(auto-fit,minmax(190px,1fr))";
+    [["Findings traced to evidence","100%","every claim ↔ a section report"],["Budget totals tie out","100%","penny-exact checks"],["Section-report voice fidelity","reviewed","human-approved"],["Unsupported claims shipped","0","the north star"]].forEach(function(k){ var c=el("div","card stat"); c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>'; g.appendChild(c); });
+    m.appendChild(g);
+    var t=el("div","card"); t.style.marginTop="14px"; t.innerHTML='<h3>Quality checks</h3><div class="card-sub">Run before a deliverable is shown to the client or SME</div>';
+    var rows=[["Section-report drafts","Traceable to interview notes","Pass","100%"],["Full report assembly","Sections present &amp; in order","Pass","100%"],["Budgetary estimate","Row/column totals reconcile","Pass","100%"],["Executive deck","Findings map to recommendations","Pass","100%"],["Report narrative","Fidelity vs house template &amp; voice","Reviewed","human-approved"],["Client-ready QC","Cross-checked vs QC checklist","Pass","pre-delivery"]];
+    t.appendChild(tableEl(["Check","What it verifies","Status","Score"],rows.map(function(r){return [r[0],r[1],'<span class="chip '+(r[2]==="Pass"?"ok":"brand")+'"><span class="cdot"></span>'+r[2]+'</span>',r[3]];}),[false,false,false,true]));
+    m.appendChild(t);
+    return m;
+  };
+
+  VIEWS.feedback=function(){
+    var m=el("div");
+    m.appendChild(head("Feedback","Every screen has a 👍 / 👎. Down-votes ask what to improve. Everything lands here for the team — this is how the product keeps getting better."));
+    m.insertAdjacentHTML("beforeend", howto("This mirrors the standing feedback loop on every MGT build: first-value / time-saved, AI-output quality, and trust — captured, stored, and reviewed here."));
+    var wrap=el("div","fb-log");
+    function draw(){ wrap.innerHTML=""; if(!STATE.feedback.length){ wrap.innerHTML='<div class="card" style="color:var(--muted);font-size:13px">No feedback yet — use the 👍 / 👎 on any screen header and it appears here.</div>'; return; }
+      STATE.feedback.forEach(function(f){ var r=el("div","fb-row");
+        r.innerHTML='<span class="chip '+(f.dir==="up"?"ok":"crit")+'">'+(f.dir==="up"?"👍 helpful":"👎 needs work")+'</span><div style="flex:1"><div style="font-weight:600">'+f.where+'</div>'+(f.note?'<div style="color:var(--muted);margin-top:2px">“'+f.note+'”</div>':'')+'<div style="color:var(--muted);font-size:11px;margin-top:3px">'+f.who+' · '+f.role+' · '+f.when+'</div></div>'; wrap.appendChild(r); });
+    }
+    m.appendChild(wrap); draw();
+    return m;
+  };
+
+  /* ---------------- shared UI builders ---------------- */
+  function tabbar(items){
+    var bar=el("div","tabs"); var panes={};
+    var api={bar:bar, pane:function(k){return panes[k];}};
+    items.forEach(function(it,i){ var b=el("button","tab"+(i===0?" active":""),it[1]); b.dataset.k=it[0]; bar.appendChild(b);
+      var p=el("div","tabpane"); p.dataset.k=it[0]; panes[it[0]]=p; });
+    var host=el("div"); host.appendChild(bar); Object.keys(panes).forEach(function(k){host.appendChild(panes[k]);});
+    bar.addEventListener("click",function(e){ var b=e.target.closest(".tab"); if(!b)return; $$(".tab",bar).forEach(function(x){x.classList.remove("active");}); b.classList.add("active"); Object.keys(panes).forEach(function(k){panes[k].classList.toggle("active",k===b.dataset.k);}); });
+    api.bar=host; return api;
+  }
+  function tableEl(cols,rows,numCols){ var w=el("div","table-wrap"); var t=el("table");
+    var thead='<tr>'+cols.map(function(c,i){return '<th class="'+(numCols&&numCols[i]?"n":"")+'">'+c+'</th>';}).join("")+'</tr>';
+    var tb=rows.map(function(r){ var isTot=/<strong>/.test(r[0]); return '<tr'+(isTot?' class="total-row"':'')+'>'+r.map(function(cell,i){return '<td class="'+(numCols&&numCols[i]?"n":"")+'">'+cell+'</td>';}).join("")+'</tr>';}).join("");
+    t.innerHTML='<thead>'+thead+'</thead><tbody>'+tb+'</tbody>'; w.appendChild(t); return w;
+  }
+
+  /* ---------------- Ask Apollo ---------------- */
+  var ASK={
+    home:["Where do I start?","What does Apollo do for me?","What's the current status?"],
+    inputs:["Why are the ZIPs quarantined?","How is private data protected?","What happens to malformed files?"],
+    process:["What's a “gate”?","Why is report-writing locked?","How do I approve a step?"],
+    setup:["What does Apollo set up automatically?","Can I edit the info-request email?","How is the assessment type decided?"],
+    interviews:["How does the interview loop work?","What if an interviewee doesn't reply?","When can report-writing start?"],
+    reports:["How are section reports drafted?","Does the interviewee review them?","Is anything invented?"],
+    deliver:["Where do the numbers come from?","How is the budget estimate built?","Can I edit the narrative?"],
+    evals:["What's the north star?","How is quality measured?","What's checked before delivery?"],
+    feedback:["Who sees my feedback?","What gets measured?"]
+  };
+  var ANSWERS={
+    "Why are the ZIPs quarantined?":"They are K-12 enrollment and facilities forecasting packages, while Apollo follows the supplied Higher-Ed Technology Assessment map. Apollo fully inventories them and uses them to test intake safety, but their content cannot populate assessment findings.",
+    "How is private data protected?":"Raw names, student IDs, addresses, and other PII stay local. They are excluded from this browser artifact and from AI prompts; only safe aggregate validation facts are shown.",
+    "What happens to malformed files?":"Apollo fails closed, reports the problem, and preserves other valid work. For the Pleasanton workbook whose metadata says A1 despite 13,084 rows, the parser must inspect the underlying sheet data so it never silently truncates the file.",
+    "What's a “gate”?":"A gate is a point where a human must decide — like the PM confirming all interviews are complete, or approving the deliverables before delivery. Apollo prepares everything and waits; it never auto-approves a gate.",
+    "Why is report-writing locked?":"The full report can't be assembled until every interview is done and every section report is finalized (the completeness gate, step 24). That protects the assessment from being written on incomplete evidence.",
+    "How do I approve a step?":"As the Project Manager, open Process, expand the phase with a gate, and click 'Approve & continue' — that advances the engagement and unlocks the next steps.",
+    "What does Apollo set up automatically?":"From the signed contract it creates the Teams chat, moves the SharePoint template folders, adds the project to QB Time, spins up Taskray from the project plan, and schedules the internal alignment meeting — the four-system manual setup, in one click.",
+    "Can I edit the info-request email?":"Yes. Apollo drafts it tailored to the assessment type and domains; the analyst reviews and edits before it goes to the client. Nothing sends without a human approving.",
+    "How is the assessment type decided?":"Apollo reads the signed contract and proposes the assessment type (e.g. 'Enterprise technology / ERP'); the PM confirms it. That choice drives the domains, interview guide, and info request.",
+    "How does the interview loop work?":"After each interview, Apollo drafts a section report from the notes and sends it to the interviewee for edits (5 business days, with an automatic one-day reminder). The analyst finalizes it. The loop repeats until every interview and report is complete.",
+    "What if an interviewee doesn't reply?":"Apollo sends a one-day reminder automatically. If there's still no response after 5 business days, the team proceeds without edits and the section report is flagged as-is — exactly as the process specifies.",
+    "When can report-writing start?":"Only after the completeness gate is met — all interviews conducted and all section reports returned/finalized. Right now 2 reports are still out for edits, so the gate isn't met yet.",
+    "How are section reports drafted?":"Apollo drafts each one from the interview notes in MGT / Tambellini's structure and voice — current state, key findings, recommendation. The interviewee reviews for accuracy, then the analyst finalizes.",
+    "Does the interviewee review them?":"Yes — every section report goes back to the interviewee for edits before it's finalized. That review is what makes the findings trustworthy.",
+    "Is anything invented?":"No. Every claim in a section report traces to interview evidence or a supporting document. Apollo drafts the prose; it does not invent findings, and a human always approves.",
+    "Where do the numbers come from?":"Findings come from the finalized section reports; budget figures come from the recommended systems and are checked to tie out. Narrative is AI-drafted to the house template; a human approves before the client sees it.",
+    "How is the budget estimate built?":"From the recommended systems, with one-time implementation, annual subscription, and a 5-year TCO per component. Apollo verifies the totals reconcile (impl + 5×annual). In the demo these are illustrative planning figures.",
+    "Can I edit the narrative?":"Yes — Apollo drafts to the house template and voice; the analyst reviews and edits before approval. Numbers and findings trace to evidence and aren't invented.",
+    "Where do I start?":"Start on Home, then move left-to-right: Setup & Alignment → Interviews → Section Reports → Deliverables. The pulsing 'Next' item always shows your current step.",
+    "What does Apollo do for me?":"It runs the whole assessment engagement and drafts every deliverable: it stands up the project, schedules interviews and milestones, drafts each section report from the interview notes, assembles the full report, budgetary estimate and executive deck — and waits for your approval at every gate.",
+    "What's the current status?":"Demo State University is at 82% — Phase 4 of 5. All 18 interviews are done and 16 of 18 section reports are finalized; the budgetary discussion is prepping and the last step is your final PM review & approval.",
+    "What's the north star?":"Every finding traces to interview evidence, and no number reaches a client unchecked. Deliverables are correct, on-voice, and human-approved — never quietly wrong.",
+    "How is quality measured?":"Findings are checked for traceability to section reports, budget totals are reconciled, and AI-drafted prose is graded for fidelity to the house voice — all before the analyst approves.",
+    "What's checked before delivery?":"A client-ready QC pass cross-checks every deliverable against the QC checklist — completeness, accuracy, tie-outs, and voice — before anything reaches the client or SME.",
+    "Who sees my feedback?":"The product team — every thumbs up/down (and any comment on a down-vote) lands on the Feedback screen with who, role, and screen.",
+    "What gets measured?":"Time saved / first value, AI-output quality, human review & override, trust, and ROI — not generic satisfaction."
+  };
+  function askRender(){
+    var body=$("#drawerBody"); body.innerHTML="";
+    body.appendChild(msg("bot","Hi "+STATE.first+" — I'm Apollo. Ask me anything about the <strong>"+viewTitle(STATE.view)+"</strong> screen."));
+    var s=el("div","sugg"); (ASK[STATE.view]||[]).forEach(function(q){ var b=el("button",null,q); b.onclick=function(){ askAsk(q); }; s.appendChild(b); }); body.appendChild(s);
+  }
+  function msg(who,html){ var d=el("div","msg "+who); d.innerHTML=html; return d; }
+  function askAsk(q){ var body=$("#drawerBody"); body.appendChild(msg("user",q));
+    var a=ANSWERS[q]||"Good question. In short: Apollo mirrors MGT / Tambellini's real process — it runs the engagement end to end, drafts every deliverable from interview evidence, checks the numbers, and waits for a human to approve at each gate. Ask me about any specific screen and I'll walk you through it.";
+    setTimeout(function(){ body.appendChild(msg("bot",a)); body.scrollTop=body.scrollHeight; },160); body.scrollTop=body.scrollHeight;
+  }
+  function viewTitle(v){ var map={home:"Home",inputs:"Evidence Intake",process:"Process",setup:"Setup & Alignment",interviews:"Interviews",reports:"Section Reports",deliver:"Deliverables",evals:"Evals & Quality",feedback:"Feedback"}; return map[v]||v; }
+
+  /* ---------------- nav + render ---------------- */
+  function buildNav(){
+    var side=$("#side"); side.innerHTML="";
+    NAV.forEach(function(grp){
+      side.appendChild(el("div","nav-group-label",grp.g));
+      grp.items.forEach(function(it){
+        var stg=STAGE[it[0]];
+        var locked = stg && stg>STATE.unlocked;
+        var isNext = stg && stg===STATE.unlocked && STATE.view!==it[0];
+        var b=el("button","nav-item"+(STATE.view===it[0]?" active":"")+(locked?" locked":"")+(isNext?" next":""));
+        var right = locked ? '<svg class="lockico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+                  : isNext ? '<span class="badge" style="background:var(--brand);color:var(--on-brand)">Next</span>'
+                  : (it[3]?'<span class="badge '+(it[4]||"")+'">'+it[3]+'</span>':'');
+        b.innerHTML='<svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="'+it[2]+'"/></svg><span>'+it[1]+'</span>'+right;
+        b.onclick=function(){ if(locked){ toast("Locked — finish the current phase gate first, then this opens."); return; } go(it[0]); };
+        side.appendChild(b);
+      });
+    });
+  }
+  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>☀️ Apollo</span> <button class="version-link" data-changelog>Artifact build v'+APP_VERSION+' · changelog</button><span>·</span><span>33-step process map</span><span>·</span><span>15 logical inputs inventoried</span><span style="margin-left:auto">MGT AI-OG · Tambellini · frontend-template</span>'; return f; }
+  function go(v){ var stg=STAGE[v]; if(stg && stg>STATE.unlocked){ toast("Locked — finish the current step first."); return; } STATE.view=v; buildNav(); var main=$("#main"); main.innerHTML=""; main.appendChild((VIEWS[v]||VIEWS.home)()); main.appendChild(appFooter()); main.scrollTop=0; window.scrollTo(0,0); if($("#drawer").classList.contains("open")) askRender(); }
+
+  /* ---------------- events ---------------- */
+  document.addEventListener("click",function(e){
+    var g=e.target.closest("[data-go]"); if(g){ go(g.dataset.go); }
+    var gate=e.target.closest("[data-gate]"); if(gate){ approveGate(gate.dataset.gate); }
+    if(e.target.closest("[data-changelog]")){ $("#changeLog").showModal(); }
+  });
+  function approveGate(name){
+    PHASES[3].status="done"; PHASES[3].steps.forEach(function(s){s.s="done";});
+    PHASES[4].status="active"; PHASES[4].steps[0].s="done"; PHASES[4].steps[1].s="active";
+    STATE.unlocked=5;
+    toast("Approved — final presentation, delivery & close-out unlocked"); go("process");
+  }
+
+  // login
+  $("#loginForm").addEventListener("submit",function(e){ e.preventDefault();
+    STATE.first=$("#fn").value.trim()||"there"; STATE.last=$("#ln").value.trim(); STATE.role=$("#role0").value;
+    $("#roleSelect").value=STATE.role; $("#avatar").textContent=((STATE.first[0]||"")+(STATE.last[0]||"")).toUpperCase();
+    $("#login").classList.add("hidden"); $("#shell").setAttribute("aria-hidden","false");
+    buildNav(); go("home");
+  });
+  $("#roleSelect").addEventListener("change",function(){ STATE.role=this.value; toast("Viewing as "+this.value); go(STATE.view); });
+  $("#themeBtn").addEventListener("click",function(){ var r=document.documentElement; var cur=r.getAttribute("data-theme"); var next = cur==="dark"?"light":(cur==="light"?"dark":(matchMedia("(prefers-color-scheme: dark)").matches?"light":"dark")); r.setAttribute("data-theme",next); go(STATE.view); });
+  $("#changeClose").addEventListener("click",function(){ $("#changeLog").close(); });
+
+  // drawer
+  $("#askFab").addEventListener("click",function(){ $("#drawer").classList.add("open"); askRender(); });
+  $("#drawerClose").addEventListener("click",function(){ $("#drawer").classList.remove("open"); });
+  $("#askSend").addEventListener("click",function(){ var v=$("#askInput").value.trim(); if(v){ askAsk(v); $("#askInput").value=""; } });
+  $("#askInput").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=this.value.trim(); if(v){ askAsk(v); this.value=""; } } });
+})();
+</script>

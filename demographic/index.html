@@ -1,0 +1,896 @@
+<style>
+  /* ---------- Demeter design tokens ---------- */
+  /* ==== MGT frontend-template "atlas" design system (mirrored from the real theme) ==== */
+  :root{
+    --font-ui: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    --font-num: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --bg:#f5f6fa; --surface:#ffffff; --surface-2:#f5f6fa; --surface-3:#eaecf5;
+    --ink:#1e1f3c; --ink-2:#4444664d; --muted:#676f94; --hairline:#e2e4ef; --hairline-2:#edeef6;
+    /* brand: MGT reflex blue / navy; secondary purple */
+    --brand:#000f9e; --brand-ink:#0a0d4f; --brand-soft:#e7eafb; --on-brand:#ffffff; --wheat:#000f9e; --secondary:#b54096;
+    /* semantic status (atlas) */
+    --ok:#047857; --ok-soft:#d1fae5; --warn:#b45309; --warn-soft:#fef3c7; --crit:#b42318; --crit-soft:#fee2e2;
+    /* categorical chart palette (validated CVD-safe, light) */
+    --c1:#2b6cb0; --c2:#dd6b20; --c3:#7a54c4;
+    --shadow:0 1px 2px rgba(10,13,79,.05), 0 6px 20px rgba(10,13,79,.09);
+    --radius:12px; --radius-sm:8px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b0d24; --surface:#14173a; --surface-2:#1c2048; --surface-3:#2a2e5a;
+      --ink:#e5e8f4; --ink-2:#e5e8f44d; --muted:#a8afc9; --hairline:#2e3360; --hairline-2:#242749;
+      --brand:#89b7e8; --brand-ink:#b9d2f0; --brand-soft:#1c2450; --on-brand:#0a0d4f; --wheat:#89b7e8; --secondary:#d8a6ca;
+      --ok:#34d399; --ok-soft:#0f2b22; --warn:#fbbf24; --warn-soft:#2c2411; --crit:#f87171; --crit-soft:#2e1a18;
+      --c1:#4685c4; --c2:#ce7e3e; --c3:#9a78d2;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f6fa; --surface:#ffffff; --surface-2:#f5f6fa; --surface-3:#eaecf5;
+    --ink:#1e1f3c; --muted:#676f94; --hairline:#e2e4ef; --hairline-2:#edeef6;
+    --brand:#000f9e; --brand-ink:#0a0d4f; --brand-soft:#e7eafb; --on-brand:#ffffff; --wheat:#000f9e; --secondary:#b54096;
+    --ok:#047857; --ok-soft:#d1fae5; --warn:#b45309; --warn-soft:#fef3c7; --crit:#b42318; --crit-soft:#fee2e2;
+    --c1:#2b6cb0; --c2:#dd6b20; --c3:#7a54c4;
+    --shadow:0 1px 2px rgba(10,13,79,.05), 0 6px 20px rgba(10,13,79,.09);
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b0d24; --surface:#14173a; --surface-2:#1c2048; --surface-3:#2a2e5a;
+    --ink:#e5e8f4; --muted:#a8afc9; --hairline:#2e3360; --hairline-2:#242749;
+    --brand:#89b7e8; --brand-ink:#b9d2f0; --brand-soft:#1c2450; --on-brand:#0a0d4f; --wheat:#89b7e8; --secondary:#d8a6ca;
+    --ok:#34d399; --ok-soft:#0f2b22; --warn:#fbbf24; --warn-soft:#2c2411; --crit:#f87171; --crit-soft:#2e1a18;
+    --c1:#4685c4; --c2:#ce7e3e; --c3:#9a78d2;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 26px rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0}
+  #app{font-family:var(--font-ui); color:var(--ink); background:var(--bg); min-height:100vh; -webkit-font-smoothing:antialiased; line-height:1.5;}
+  h1,h2,h3,h4{margin:0; text-wrap:balance; font-weight:650; letter-spacing:-.01em;}
+  p{margin:0}
+  button{font-family:inherit; cursor:pointer}
+  a{color:var(--brand)}
+  .num{font-variant-numeric:tabular-nums; font-family:var(--font-num)}
+  .eyebrow{font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted)}
+  :focus-visible{outline:2px solid var(--brand); outline-offset:2px; border-radius:4px}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important; animation:none!important}}
+
+  /* ---------- shell ---------- */
+  .shell{display:grid; grid-template-columns:248px 1fr; grid-template-rows:auto 1fr; grid-template-areas:"top top" "side main"; min-height:100vh}
+  .topbar{grid-area:top; display:flex; align-items:center; gap:16px; padding:0 20px; height:58px; background:var(--surface); border-bottom:1px solid var(--hairline); position:sticky; top:0; z-index:30}
+  .side{grid-area:side; background:var(--surface); border-right:1px solid var(--hairline); padding:14px 12px; display:flex; flex-direction:column; gap:3px; position:sticky; top:58px; height:calc(100vh - 58px); overflow-y:auto}
+  .main{grid-area:main; padding:22px 26px 80px; max-width:1160px}
+
+  /* wordmark */
+  .brandmark{display:flex; align-items:center; gap:10px; min-width:220px}
+  .grain{width:30px; height:30px; flex:0 0 auto}
+  .brandmark .name{font-size:18px; font-weight:750; letter-spacing:-.02em}
+  .brandmark .sub{font-size:10.5px; color:var(--muted); font-weight:600; letter-spacing:.04em; text-transform:uppercase}
+
+  .topbar .spacer{flex:1}
+  .proj-pill{display:flex; align-items:center; gap:9px; background:var(--surface-2); border:1px solid var(--hairline); border-radius:999px; padding:5px 12px 5px 10px; font-size:13px; font-weight:600}
+  .proj-pill .dot{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+  .icon-btn{display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:9px; background:transparent; border:1px solid transparent; color:var(--muted)}
+  .icon-btn:hover{background:var(--surface-2); color:var(--ink)}
+  .who{display:flex; align-items:center; gap:9px}
+  .avatar{width:30px;height:30px;border-radius:50%; background:var(--brand); color:var(--on-brand); display:grid; place-items:center; font-size:12px; font-weight:700}
+  .role-select{font-family:inherit; font-size:12px; font-weight:600; color:var(--ink); background:var(--surface-2); border:1px solid var(--hairline); border-radius:8px; padding:6px 8px}
+
+  /* nav */
+  .nav-group-label{font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); padding:12px 10px 5px}
+  .nav-item{display:flex; align-items:center; gap:11px; padding:8px 10px; border-radius:9px; color:var(--ink); font-size:13.5px; font-weight:560; border:1px solid transparent; text-align:left; background:transparent; width:100%}
+  .nav-item:hover{background:var(--surface-2)}
+  .nav-item.active{background:var(--brand-soft); color:var(--brand-ink); border-color:transparent; font-weight:650}
+  .nav-item .ni{width:18px; height:18px; flex:0 0 auto; opacity:.85}
+  .nav-item .badge{margin-left:auto; font-size:10px; font-weight:700; padding:1px 7px; border-radius:999px; background:var(--surface-3); color:var(--muted)}
+  .nav-item .badge.warn{background:var(--warn-soft); color:var(--warn)}
+  .nav-item .badge.ok{background:var(--ok-soft); color:var(--ok)}
+  .nav-item.locked{opacity:.48; cursor:not-allowed}
+  .nav-item.locked:hover{background:transparent}
+  .nav-item .lockico{margin-left:auto; opacity:.6}
+  .nav-item.next{outline:2px solid var(--brand); outline-offset:-2px; animation:nextpulse 1.9s ease-in-out infinite}
+  @keyframes nextpulse{0%,100%{box-shadow:0 0 0 0 var(--brand-soft)}50%{box-shadow:0 0 0 5px var(--brand-soft)}}
+  .appfooter{margin-top:36px; padding-top:14px; border-top:1px solid var(--hairline); display:flex; flex-wrap:wrap; gap:8px; align-items:center; font-size:11.5px; color:var(--muted)}
+  .appfooter code{font-family:var(--font-num); background:var(--surface-2); padding:1px 6px; border-radius:5px; border:1px solid var(--hairline); color:var(--ink)}
+  .steps3{display:flex; gap:12px; flex-wrap:wrap}
+  .step3{flex:1; min-width:180px; background:var(--surface); border:1px solid var(--hairline); border-radius:10px; padding:13px; box-shadow:var(--shadow)}
+  .step3 .s3n{width:22px;height:22px;border-radius:6px;background:var(--brand-soft);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;font-size:12px;font-family:var(--font-num)}
+
+  /* view header */
+  .view-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:6px}
+  .view-head h1{font-size:23px}
+  .view-head .vh-sub{color:var(--muted); font-size:13.5px; margin-top:3px; max-width:64ch}
+  .view-head .vh-actions{margin-left:auto; display:flex; align-items:center; gap:8px}
+  .howto{display:flex; gap:9px; align-items:flex-start; background:var(--brand-soft); border:1px solid transparent; color:var(--brand-ink); padding:9px 12px; border-radius:10px; font-size:12.5px; margin:12px 0 18px; max-width:80ch}
+  .howto svg{flex:0 0 auto; margin-top:1px}
+
+  /* cards + grid */
+  .grid{display:grid; gap:14px}
+  .card{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)}
+  .card h3{font-size:14.5px}
+  .card .card-sub{color:var(--muted); font-size:12px; margin-top:2px}
+  .stat{display:flex; flex-direction:column; gap:3px}
+  .stat .k{font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted)}
+  .stat .v{font-size:27px; font-weight:720; letter-spacing:-.02em}
+  .stat .d{font-size:12px; color:var(--muted)}
+  .trend-down{color:var(--crit); font-weight:650}
+  .trend-up{color:var(--ok); font-weight:650}
+
+  /* pills / chips */
+  .chip{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:650; padding:3px 9px; border-radius:999px; background:var(--surface-3); color:var(--muted); white-space:nowrap}
+  .chip.ok{background:var(--ok-soft); color:var(--ok)} .chip.warn{background:var(--warn-soft); color:var(--warn)}
+  .chip.crit{background:var(--crit-soft); color:var(--crit)} .chip.brand{background:var(--brand-soft); color:var(--brand-ink)}
+  .chip .cdot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  .btn{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:650; padding:8px 14px; border-radius:9px; border:1px solid var(--hairline); background:var(--surface); color:var(--ink)}
+  .btn:hover{background:var(--surface-2)}
+  .btn.primary{background:var(--brand); color:var(--on-brand); border-color:var(--brand)}
+  .btn.primary:hover{background:var(--brand-ink)}
+  .btn.sm{padding:5px 10px; font-size:12px}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+
+  /* tables */
+  .table-wrap{overflow-x:auto; border:1px solid var(--hairline); border-radius:10px}
+  table{border-collapse:collapse; width:100%; font-size:12.5px}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--hairline-2); white-space:nowrap}
+  th{background:var(--surface-2); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:700; position:sticky; top:0}
+  td.n, th.n{text-align:right; font-variant-numeric:tabular-nums; font-family:var(--font-num)}
+  tbody tr:hover{background:var(--surface-2)}
+  tr:last-child td{border-bottom:none}
+  .total-row td{font-weight:700; background:var(--surface-2)}
+
+  /* process */
+  .phase{border:1px solid var(--hairline); border-radius:12px; background:var(--surface); margin-bottom:12px; overflow:hidden}
+  .phase-head{display:flex; align-items:center; gap:12px; padding:13px 16px; cursor:pointer}
+  .phase-head:hover{background:var(--surface-2)}
+  .phase-idx{width:26px;height:26px;border-radius:8px; display:grid; place-items:center; font-size:12px; font-weight:700; background:var(--surface-3); color:var(--muted); font-family:var(--font-num)}
+  .phase.done .phase-idx{background:var(--ok-soft); color:var(--ok)}
+  .phase.active .phase-idx{background:var(--brand); color:#fff}
+  .phase.gate .phase-idx{background:var(--warn-soft); color:var(--warn)}
+  .phase.demeter{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand)}
+  .phase-title{font-weight:650; font-size:14px}
+  .phase-meta{color:var(--muted); font-size:12px}
+  .phase-body{padding:4px 16px 14px 54px; display:none}
+  .phase.open .phase-body{display:block}
+  .step{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid var(--hairline-2); font-size:13px}
+  .step:first-child{border-top:none}
+  .step .sdot{width:16px;height:16px;border-radius:50%; border:2px solid var(--hairline); flex:0 0 auto}
+  .step.done .sdot{background:var(--ok); border-color:var(--ok)}
+  .step.active .sdot{border-color:var(--brand); box-shadow:inset 0 0 0 3px var(--brand)}
+  .step.gate .sdot{border-color:var(--warn); background:var(--warn-soft)}
+  .step .stype{margin-left:auto; font-size:10.5px}
+  .prog-ring{--p:62; width:120px;height:120px; position:relative}
+  .prog-ring svg{transform:rotate(-90deg)}
+  .prog-ring .pt{position:absolute; inset:0; display:grid; place-items:center; font-size:26px; font-weight:750; font-family:var(--font-num)}
+
+  /* tabs */
+  .tabs{display:flex; gap:4px; border-bottom:1px solid var(--hairline); margin:6px 0 16px; flex-wrap:wrap}
+  .tab{padding:8px 13px; font-size:13px; font-weight:600; color:var(--muted); border:none; background:transparent; border-bottom:2px solid transparent; margin-bottom:-1px}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--brand-ink); border-bottom-color:var(--brand); font-weight:680}
+  .tabpane{display:none} .tabpane.active{display:block}
+
+  /* reconciliation rows */
+  .recon{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px solid var(--hairline); border-radius:10px; margin-bottom:8px; background:var(--surface)}
+  .recon .rl{width:5px; align-self:stretch; border-radius:3px; background:var(--ok)}
+  .recon.bad .rl{background:var(--crit)}
+  .recon .rmeta{flex:1}
+  .recon .rname{font-weight:640; font-size:13px}
+  .recon .rdesc{color:var(--muted); font-size:12px}
+  .recon .rnums{font-family:var(--font-num); font-size:12.5px; text-align:right}
+
+  /* deliverables */
+  .report-shell{display:grid; grid-template-columns:230px 1fr; gap:0; border:1px solid var(--hairline); border-radius:10px; overflow:hidden}
+  .report-toc{background:var(--surface-2); border-right:1px solid var(--hairline); padding:8px}
+  .toc-item{padding:7px 10px; border-radius:7px; font-size:12.5px; color:var(--ink); cursor:pointer; display:flex; gap:8px; align-items:center}
+  .toc-item:hover{background:var(--surface-3)} .toc-item.active{background:var(--brand-soft); color:var(--brand-ink); font-weight:640}
+  .toc-item .tnum{font-family:var(--font-num); color:var(--muted); font-size:11px}
+  .report-page{padding:26px 30px; background:var(--surface); min-height:360px}
+  .report-page h2{font-size:19px; margin-bottom:4px}
+  .doc-p{font-size:13px; color:var(--ink); margin:10px 0; max-width:66ch; line-height:1.65}
+  .slide-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px}
+  .slide{border:1px solid var(--hairline); border-radius:10px; overflow:hidden; background:var(--surface)}
+  .slide .sthumb{aspect-ratio:16/9; background:linear-gradient(135deg,var(--surface-3),var(--surface-2)); display:grid; place-items:center; color:var(--muted); font-size:11px; border-bottom:1px solid var(--hairline); position:relative}
+  .slide .scap{padding:8px 10px; font-size:11.5px; font-weight:600}
+  .slide .snum{position:absolute; top:6px; left:8px; font-family:var(--font-num); font-size:10px; color:var(--muted)}
+  .mapslot{display:flex; align-items:center; gap:12px; padding:12px 14px; border:1px dashed var(--hairline); border-radius:10px; margin-bottom:8px; background:var(--surface-2)}
+  .mapslot.filled{border-style:solid; background:var(--surface)}
+  .mapthumb{width:64px;height:44px;border-radius:6px;background:var(--surface-3); display:grid; place-items:center; color:var(--muted); flex:0 0 auto; overflow:hidden}
+
+  /* feedback */
+  .fb{display:inline-flex; gap:4px; align-items:center}
+  .fb button{width:30px;height:30px;border-radius:8px;border:1px solid var(--hairline); background:var(--surface); color:var(--muted); display:grid; place-items:center}
+  .fb button:hover{background:var(--surface-2); color:var(--ink)}
+  .fb button.up.on{background:var(--ok-soft); color:var(--ok); border-color:transparent}
+  .fb button.down.on{background:var(--crit-soft); color:var(--crit); border-color:transparent}
+  .fb-log{display:flex; flex-direction:column; gap:8px}
+  .fb-row{display:flex; gap:10px; align-items:flex-start; padding:11px 13px; border:1px solid var(--hairline); border-radius:10px; background:var(--surface); font-size:12.5px}
+
+  /* Ask Demeter drawer */
+  .ask-fab{position:fixed; right:22px; bottom:22px; z-index:40; display:flex; align-items:center; gap:9px; padding:11px 16px 11px 13px; border-radius:999px; background:var(--brand); color:var(--on-brand); border:none; box-shadow:0 6px 20px rgba(10,13,79,.35); font-size:13.5px; font-weight:650}
+  .ask-fab:hover{background:var(--brand-ink)}
+  .drawer{position:fixed; top:0; right:0; height:100vh; width:390px; max-width:92vw; background:var(--surface); border-left:1px solid var(--hairline); box-shadow:-8px 0 30px rgba(0,0,0,.14); z-index:50; transform:translateX(100%); transition:transform .28s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column}
+  .drawer.open{transform:translateX(0)}
+  .drawer-head{display:flex; align-items:center; gap:10px; padding:15px 16px; border-bottom:1px solid var(--hairline)}
+  .drawer-body{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px}
+  .msg{max-width:88%; padding:10px 13px; border-radius:13px; font-size:13px; line-height:1.55}
+  .msg.bot{background:var(--surface-2); border:1px solid var(--hairline-2); align-self:flex-start; border-bottom-left-radius:4px}
+  .msg.user{background:var(--brand); color:var(--on-brand); align-self:flex-end; border-bottom-right-radius:4px}
+  .sugg{display:flex; flex-wrap:wrap; gap:7px}
+  .sugg button{font-size:12px; padding:6px 11px; border-radius:999px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--brand-ink); font-weight:600}
+  .sugg button:hover{background:var(--brand-soft)}
+  .drawer-input{padding:12px; border-top:1px solid var(--hairline); display:flex; gap:8px}
+  .drawer-input input{flex:1; font-family:inherit; font-size:13px; padding:9px 12px; border-radius:9px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink)}
+
+  /* login */
+  .login{position:fixed; inset:0; z-index:80; background:linear-gradient(160deg,var(--bg),var(--surface-2)); display:grid; place-items:center; padding:20px}
+  .login-card{background:var(--surface); border:1px solid var(--hairline); border-radius:16px; box-shadow:var(--shadow); padding:34px; width:100%; max-width:400px}
+  .login-card .grain{width:44px;height:44px}
+  .field{display:flex; flex-direction:column; gap:5px; margin-top:14px}
+  .field label{font-size:12px; font-weight:650; color:var(--muted)}
+  .field input, .field select{font-family:inherit; font-size:14px; padding:11px 13px; border-radius:10px; border:1px solid var(--hairline); background:var(--surface-2); color:var(--ink)}
+  .hidden{display:none!important}
+
+  /* charts */
+  .chart-legend{display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:var(--muted); margin-top:8px}
+  .chart-legend .lg{display:inline-flex; align-items:center; gap:6px}
+  .chart-legend .sw{width:11px;height:11px;border-radius:3px}
+  .tooltip{position:fixed; pointer-events:none; background:var(--ink); color:var(--surface); font-size:11.5px; padding:6px 9px; border-radius:7px; z-index:70; opacity:0; transition:opacity .1s; font-family:var(--font-num); white-space:nowrap; box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  svg .gridline{stroke:var(--hairline-2)} svg text{fill:var(--muted); font-size:10px; font-family:var(--font-ui)}
+  svg .axlabel{fill:var(--muted)}
+
+  @media (max-width:900px){
+    .shell{grid-template-columns:1fr; grid-template-areas:"top" "main"}
+    .side{display:none}
+    .report-shell{grid-template-columns:1fr} .report-toc{border-right:none; border-bottom:1px solid var(--hairline)}
+  }
+</style>
+
+<div id="app">
+  <!-- ================= LOGIN ================= -->
+  <div class="login" id="login">
+    <form class="login-card" id="loginForm">
+      <div style="display:flex; align-items:center; gap:12px">
+        <svg class="grain" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="var(--wheat)" stroke-width="1.6" stroke-linecap="round"><path d="M16 29V9"/><path d="M16 12c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 8.2 21 8 21 8s-2 2.6-5 4z"/><path d="M16 17c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 12.2 21 12 21 12s-2 2.6-5 5z"/><path d="M16 22c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 17.2 21 17 21 17s-2 2.6-5 5z"/></g></svg>
+        <div>
+          <div style="font-size:22px; font-weight:760; letter-spacing:-.02em">Demeter</div>
+          <div class="eyebrow" style="margin-top:2px">Demographic &amp; Enrollment Study</div>
+        </div>
+      </div>
+      <p class="doc-p" style="margin-top:16px; font-size:13px; color:var(--muted)">Sign in to run a district enrollment-forecast engagement — from client data intake to the board-ready forecast report and deck.</p>
+      <div class="field"><label for="fn">First name</label><input id="fn" required placeholder="e.g. Cassondra" autocomplete="given-name"></div>
+      <div class="field"><label for="ln">Last name</label><input id="ln" required placeholder="e.g. Torlucci" autocomplete="family-name"></div>
+      <div class="field"><label for="role0">Your role</label>
+        <select id="role0"><option>Project Manager</option><option>Demographer / Analyst</option><option>GIS Analyst</option></select>
+      </div>
+      <button class="btn primary" type="submit" style="width:100%; justify-content:center; margin-top:18px; padding:11px">Sign in with MGT SSO</button>
+      <p style="font-size:11px; color:var(--muted); text-align:center; margin-top:12px">Showing the <strong>Demo Unified School District</strong> worked example · your real district data loads once connected</p>
+    </form>
+  </div>
+
+  <!-- ================= APP SHELL ================= -->
+  <div class="shell" id="shell" aria-hidden="true">
+    <!-- topbar -->
+    <header class="topbar">
+      <div class="brandmark">
+        <svg class="grain" viewBox="0 0 32 32" aria-hidden="true"><g fill="none" stroke="var(--wheat)" stroke-width="1.6" stroke-linecap="round"><path d="M16 29V9"/><path d="M16 12c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 8.2 21 8 21 8s-2 2.6-5 4z"/><path d="M16 17c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 12.2 21 12 21 12s-2 2.6-5 5z"/><path d="M16 22c-3-1.4-5-4-5-4s2.6.2 5 2.4C18.4 17.2 21 17 21 17s-2 2.6-5 5z"/></g></svg>
+        <div><div class="name">Demeter</div><div class="sub">Demographic &amp; Enrollment Study</div></div>
+      </div>
+      <div class="proj-pill"><span class="dot"></span> Demo Unified School District <span style="color:var(--muted); font-weight:500">· SY 2025/26</span></div>
+      <div class="spacer"></div>
+      <select class="role-select" id="roleSelect" title="Your role"><option>Project Manager</option><option>Demographer / Analyst</option><option>GIS Analyst</option></select>
+      <button class="icon-btn" id="themeBtn" title="Toggle light / dark" aria-label="Toggle theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M19 5l-1.5 1.5M6.5 17.5 5 19"/></svg>
+      </button>
+      <div class="who"><div class="avatar" id="avatar">–</div></div>
+    </header>
+
+    <!-- sidebar -->
+    <nav class="side" id="side"></nav>
+
+    <!-- main -->
+    <main class="main" id="main"></main>
+  </div>
+
+  <!-- Ask Demeter -->
+  <button class="ask-fab" id="askFab">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    Ask Demeter
+  </button>
+  <aside class="drawer" id="drawer" aria-label="Ask Demeter help">
+    <div class="drawer-head">
+      <div class="avatar" style="background:var(--brand); color:var(--on-brand)">D</div>
+      <div style="flex:1"><div style="font-weight:680; font-size:14px">Ask Demeter</div><div style="font-size:11.5px; color:var(--muted)">Your guide to this step</div></div>
+      <button class="icon-btn" id="drawerClose" aria-label="Close">✕</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-input"><input id="askInput" placeholder="Ask about this screen…" aria-label="Ask a question"><button class="btn primary sm" id="askSend">Send</button></div>
+  </aside>
+
+  <div class="tooltip" id="tip"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $=function(s,r){return (r||document).querySelector(s);};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+  var el=function(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+
+  /* ---------------- state ---------------- */
+  var STATE={ first:"", last:"", role:"Project Manager", view:"home", feedback:[], unlocked:6 };
+  var STAGE={process:1,intake:2,factors:3,forecast:4,recon:5,deliver:6};
+  var PAL=function(){ var cs=getComputedStyle(document.documentElement); return {c1:cs.getPropertyValue('--c1').trim(),c2:cs.getPropertyValue('--c2').trim(),c3:cs.getPropertyValue('--c3').trim(),brand:cs.getPropertyValue('--brand').trim(),ink:cs.getPropertyValue('--muted').trim(),grid:cs.getPropertyValue('--hairline-2').trim()};};
+
+  /* ---------------- demo data (anonymized Demo Unified School District) ---------------- */
+  var YEARS=["25/26","26/27","27/28","28/29","29/30","30/31","31/32","32/33","33/34","34/35"];
+  var ENR={ // 3 grade bands, 10 yr resident forecast
+    Elementary:[5710,5665,5590,5495,5410,5350,5300,5265,5240,5225],
+    Middle:[2180,2150,2120,2095,2060,2020,1985,1960,1945,1935],
+    High:[2530,2510,2475,2430,2380,2320,2260,2210,2175,2150]
+  };
+  var CAPTURE=[0.83,0.826,0.82,0.812,0.805,0.799,0.79,0.783,0.777,0.772];
+  var BIRTHS=[ // year, births, K enrollment 5 yrs later, capture
+    ["2016",1512,1245,0.823],["2017",1488,1210,0.813],["2018",1454,1176,0.809],
+    ["2019",1421,1142,0.804],["2020",1388,1108,0.798],["2021",1361,1082,0.795]
+  ];
+  var SYF=[["Single-family detached (SFD)",0.475],["Multi-family attached (MFA)",0.178],["Apartments (APT)",0.118]];
+  var DEV=[["Apartments",1776,0.59],["Single-family attached",903,0.30],["Single-family detached",331,0.11]];
+  var SCHOOLS=[ // sample of school-level resident forecast (elementary)
+    ["Cedar Grove ES","K-5",666,412,398,-3.4],["Maple Ridge ES","K-5",540,506,489,-3.4],
+    ["Lakeshore ES","K-5",612,548,571,4.2],["Birchwood ES","K-5",480,395,372,-5.8],
+    ["Prairie View ES","K-5",720,662,690,4.2],["Hollow Creek ES","K-5",510,438,421,-3.9],
+    ["Ridgeline MS","6-8",900,742,715,-3.6],["Summit MS","6-8",850,690,668,-3.2],
+    ["Demo North HS","9-12",1600,1285,1245,-3.1],["Demo South HS","9-12",1500,1245,1198,-3.8]
+  ];
+
+  var PHASES=[
+    {t:"Initiate the engagement", meta:"Steps 1–3 · kickoff & scope", status:"done", steps:[
+      {n:"Work order initiated (Salesforce/Mavenlink)",s:"done",ty:"Trigger"},
+      {n:"Project & folder structure auto-created + task checklist",s:"done",ty:"Auto"},
+      {n:"PM kickoff — confirm scope, deliverables, timeline",s:"done",ty:"Human gate"}
+    ]},
+    {t:"Data intake & verification", meta:"Steps 4–6 · client data QA", status:"done", steps:[
+      {n:"Data request issued & tracked (auto check-off)",s:"done",ty:"Auto"},
+      {n:"Intake QA vs Data Verification Form — gaps flagged",s:"done",ty:"AI-draft"},
+      {n:"PM data-readiness go/no-go",s:"done",ty:"Human gate"}
+    ]},
+    {t:"GIS & geocoding", meta:"Steps 7–12, 47–48 · match to ~99%", status:"done", steps:[
+      {n:"School points, boundaries, study areas (ArcGIS Pro)",s:"done",ty:"GIS"},
+      {n:"Geocode current + historic students",s:"done",ty:"GIS"},
+      {n:"Unmatched-record district-review packet",s:"done",ty:"AI-draft"},
+      {n:"Match-rate gate reached — 99.2%",s:"done",ty:"Decision"}
+    ]},
+    {t:"Forecast factors", meta:"Steps 13–18, 49 · ingested & reconciled", status:"done", steps:[
+      {n:"Birth rate + capture rate ingested",s:"done",ty:"Ingest"},
+      {n:"Student mobility factors ingested",s:"done",ty:"Ingest"},
+      {n:"Student yield factors ingested",s:"done",ty:"Ingest"},
+      {n:"Residential development phasing — PM/district review",s:"done",ty:"Human gate"}
+    ]},
+    {t:"Run the forecast", meta:"Steps 19–24 · resident + enrollment", status:"done", steps:[
+      {n:"PM confirms forecast assumptions (the gate)",s:"done",ty:"Human gate"},
+      {n:"Districtwide + school-level resident forecast",s:"done",ty:"Ingest"},
+      {n:"School-level enrollment forecast",s:"done",ty:"Ingest"},
+      {n:"Attendance matrices + transfer analysis",s:"done",ty:"Ingest"}
+    ]},
+    {t:"Assemble deliverables", meta:"Steps 26, 33, 38–40 · report + deck", status:"active", steps:[
+      {n:"Consolidate report tables + maps",s:"done",ty:"AI-draft"},
+      {n:"Draft Student Forecast Report (.docx)",s:"done",ty:"AI-draft"},
+      {n:"Draft board presentation (.pptx)",s:"active",ty:"AI-draft"}
+    ]},
+    {t:"Review, deliver & close", meta:"Steps 41–46 · sign-off & board", status:"gate", steps:[
+      {n:"PM review → analyst edits → final approval",s:"gate",ty:"Human gate"},
+      {n:"Board presentation delivery",s:"locked",ty:"Human gate"},
+      {n:"Lessons learned captured",s:"locked",ty:"Output"}
+    ]}
+  ];
+
+  var RECON=[ // tie-outs
+    {name:"Study areas → attendance area → districtwide",desc:"All 132 study areas sum to district total",l:"10,420 = 10,420",ok:true},
+    {name:"School-level resident → districtwide",desc:"Σ school-level resident forecast = districtwide",l:"10,420 = 10,420",ok:true},
+    {name:"Enrollment forecast → approved assumptions",desc:"Reconciles to confirmed factor set",l:"in tolerance",ok:true},
+    {name:"Attendance matrix: residence vs enrollment",desc:"Row (residence) & column (enrollment) totals balance with transfers",l:"balanced",ok:true},
+    {name:"Student Accounting Summary",desc:"Enrolled = forecast-used + out-of-boundary + unmatched",l:"10,595 = 10,111 + 401 + 83",ok:true}
+  ];
+
+  var REPORT_TOC=[
+    ["ES","Executive Summary"],["1","Methodology & Data Sources"],["1.2","Forecast Methodology (residence-based modified cohort)"],
+    ["1.3","Forecast Factors — birth, mobility, yield"],["2","Student Information & Attendance Matrix"],
+    ["2.4","Capture Rate Analysis"],["3","District-Wide Forecasts"],["4","Attendance Area Forecasts"],["5","Enrollment Forecasts"],["A","Appendix A: Census Data"]
+  ];
+  var REPORT_BODY={
+    "ES":["<h2>Executive Summary</h2>","Demo Unified School District contracted MGT to prepare a residence-based, 10-year student population forecast to guide facility planning. Overall, the resident student population is projected to <strong>decrease ~4% over five years and ~8% over ten years</strong>, driven by declining births and mobility, partially offset by ~3,010 planned residential units.","Key items: PK–5 down 8% over five years; grades 6–8 down 5%; grades 9–12 down 6% as larger cohorts graduate. There are approximately 3,010 active, planned, or future units in the district boundary."],
+    "1":["<h2>1. Methodology &amp; Data Sources</h2>","Five geographic layers were created or updated: street centerline/parcels, study areas, schools, planned residential development, and student data. Each student was geocoded to their residential address to enable spatial analysis at the study-area level (the building blocks of attendance areas)."],
+    "1.2":["<h2>Forecast Methodology</h2>","MGT produces 10-year, <strong>residence-based, modified cohort</strong> forecasts for each study area. Forecasts are based on where students <em>reside</em> rather than where they attend — the most accurate basis for locating future facilities. A standard cohort progression is modified by demographic factors (births/capture, mobility, yield) and student residential location."],
+    "1.3":["<h2>Forecast Factors</h2>","Three primary factors influence the forecast: <strong>birth rates</strong> (a change in births five years prior signals a similar change in the kindergarten class), <strong>student mobility</strong> (a spatial cohort-survival rate applied per grade), and <strong>student yield factors</strong> (students generated per new housing unit by type)."],
+    "2":["<h2>2. Student Information &amp; Attendance Matrix</h2>","The forecast rests on the latest four years of student data, quality-checked via the Data Verification Form and geocoded by home address. The attendance matrix clarifies where students <em>live</em> (School of Residence) versus where they <em>attend</em> (School of Attendance), and surfaces intra-district transfer patterns."],
+    "2.4":["<h2>Capture Rate Analysis</h2>","The capture rate is the share of resident school-age children enrolled in district schools, benchmarked against American Community Survey estimates. Demo Unified's capture rate has eased from 0.83 to 0.77 over ten years — evidence the decline is a trend, not an anomaly."],
+    "3":["<h2>3. District-Wide Student Population Forecasts</h2>","The district-wide summary compiles all 132 study-area forecasts. Resident enrollment is projected to move from 10,420 (SY 2025/26) toward ~9,600 by SY 2034/35."],
+    "4":["<h2>4. Attendance Area Forecasts</h2>","Each attendance area is summarized to give a local view. Growth areas (residential development) are offset by outward mobility in several elementary areas; see the school-level table and 5-year change map."],
+    "5":["<h2>5. Enrollment Forecasts</h2>","A five-year projection of attendance at each school by grade, developed by applying transfer patterns to the resident forecast. These normalize policy and program choice and should be used for staffing/budget, not facility siting."],
+    "A":["<h2>Appendix A: Census Data</h2>","Supplemental demographic and income profile based on Esri/ACS estimates. Provided for context; MGT did not independently verify Census figures."]
+  };
+  var DECK=["Title — Demo USD Resident Student Forecast","Work Accomplished","Data Sets for Analysis","Spatial Data Creation","Think Spatially","Student Density Map","Historical Student Analysis","Attendance Matrix — Elementary","Utilization & Transfer","Attendance Matrix — Middle","Capture Rate Analysis","Forecast Factors","Historic & Projected Births","Kindergarten Capture Rate","Mobility Factors","Student Yield Factors","Residential Developments","Developments by Area & Type","District Forecast","K-12 Forecast","Elementary Resident Forecast","Summary"];
+  var MAPS=[["Map 1","Residential Developments"],["Map 2","Resident Student Density SY 25/26"],["Map 3","Forecasted 5-Year Change"],["Map 4","Elementary Attendance Areas"],["Map 5","Middle School Attendance Areas"],["Map 6","High School Attendance Areas"]];
+
+  var NAV=[
+    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"]]},
+    {g:"Run the study", items:[
+      ["process","Process",  "M4 6h16M4 12h16M4 18h10", "Phase 4/7"],
+      ["intake","Data Intake & QA","M14 3v5h5M6 3h9l5 5v13H6z"],
+      ["factors","Forecast Factors","M4 19V5m0 14h16M8 15l3-4 3 3 4-6"],
+      ["forecast","Forecasts","M3 17l6-6 4 4 8-9"],
+      ["recon","Reconciliation","M9 12l2 2 4-4M12 3a9 9 0 100 18 9 9 0 000-18z","ok"],
+      ["deliver","Deliverables","M6 2h9l5 5v15H6z"]
+    ]},
+    {g:"Product", items:[
+      ["evals","Evals & Quality","M4 19V5m4 14v-7m4 7V9m4 10v-4m4 4V7"],
+      ["feedback","Feedback","M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"]
+    ]}
+  ];
+
+  /* ---------------- helpers ---------------- */
+  function fmt(n){return n.toLocaleString("en-US");}
+  function pct(x){return (x*100).toFixed(1)+"%";}
+
+  function statChip(status){
+    var m={done:["ok","Complete"],active:["brand","In progress"],gate:["warn","Awaiting sign-off"],locked:["","Locked"]};
+    var v=m[status]||["","–"]; return '<span class="chip '+v[0]+'"><span class="cdot"></span>'+v[1]+'</span>';
+  }
+  function srcChip(s){ if(!s)return ''; var d=/Demeter/.test(s); return '<span class="chip'+(d?' brand':'')+'" style="margin-right:8px'+(d?'':';background:var(--surface-3);color:var(--muted)')+'">'+s+'</span>'; }
+
+  /* ---------------- feedback ---------------- */
+  function fbWidget(where){
+    var w=el("div","fb");
+    var up=el("button","up",'👍'), dn=el("button","down",'👎');
+    up.title="This was helpful"; dn.title="This needs work";
+    up.onclick=function(){ up.classList.add("on"); dn.classList.remove("on"); logFb(where,"up",""); toast("Thanks — logged as helpful"); };
+    dn.onclick=function(){ dn.classList.add("on"); up.classList.remove("on");
+      var c=prompt("What should improve on “"+where+"”?"); logFb(where,"down",c||""); toast("Thanks — sent to the team"); };
+    w.appendChild(up); w.appendChild(dn); return w;
+  }
+  function logFb(where,dir,note){ STATE.feedback.unshift({where:where,dir:dir,note:note,who:STATE.first+" "+STATE.last,role:STATE.role,when:"just now"}); }
+  var toastT;
+  function toast(msg){ var t=$("#toastEl"); if(!t){t=el("div"); t.id="toastEl"; t.style.cssText="position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:9px 15px;border-radius:9px;font-size:13px;z-index:90;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:opacity .2s"; document.getElementById("app").appendChild(t);} t.textContent=msg; t.style.opacity="1"; clearTimeout(toastT); toastT=setTimeout(function(){t.style.opacity="0";},1900); }
+
+  /* ---------------- view header ---------------- */
+  function head(title, sub, actionsHtml){
+    var h=el("div","view-head");
+    h.innerHTML='<div><h1>'+title+'</h1><div class="vh-sub">'+sub+'</div></div><div class="vh-actions"></div>';
+    var a=$(".vh-actions",h);
+    a.appendChild(fbWidget(title));
+    if(actionsHtml){ var w=el("span",null,actionsHtml); a.appendChild(w); }
+    return h;
+  }
+  function howto(txt){ return '<div class="howto"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><div>'+txt+'</div></div>'; }
+  function srcBanner(txt){ return '<div class="howto" style="background:var(--surface-2);color:var(--muted);border:1px solid var(--hairline)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg><div>'+txt+'</div></div>'; }
+
+  /* ======================================================= VIEWS ======================================================= */
+  var VIEWS={};
+
+  VIEWS.home=function(){
+    var m=el("div");
+    m.appendChild(head("Hey "+STATE.first+" 👋","Here's where the <strong>Demo Unified School District</strong> enrollment study stands. Pick up at the highlighted step, or jump anywhere from the left."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>What Demeter builds:</strong> the client <strong>report + board deck</strong>. Data intake &amp; GIS are already built (Aditya) and the factors &amp; forecast run in ArcGIS + SchoolSite Pro — Demeter <strong>ingests those finished outputs</strong>, proves every number ties out, assembles the deliverables, and runs review → deliver → close."));
+    var s3=el("div"); s3.style.margin="0 0 18px";
+    s3.innerHTML='<div class="eyebrow" style="margin-bottom:8px">New here? Demeter in 3 steps</div><div class="steps3">'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">1</span><strong style="font-size:13px">Bring the data in</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">Upload the district files — Demeter QAs them and flags any gaps.</div></div>'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">2</span><strong style="font-size:13px">Confirm factors &amp; forecast</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">It ingests your workbooks and proves every number ties out.</div></div>'+
+      '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">3</span><strong style="font-size:13px">Get the report &amp; deck</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">Demeter assembles the board-ready deliverables to MGT’s templates.</div></div></div>';
+    m.appendChild(s3);
+
+    var g=el("div","grid"); g.style.gridTemplateColumns="repeat(auto-fit,minmax(200px,1fr))";
+    var kpis=[["Resident students (SY 25/26)","10,420","Baseline for the forecast"],
+              ["10-yr change","−8%","<span class='trend-down'>▼ declining</span> · births + mobility"],
+              ["Planned units","3,010","≈ 470 students yielded"],
+              ["Geocode match rate","99.2%","above the 99% gate"]];
+    kpis.forEach(function(k){ var c=el("div","card stat"); c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>'; g.appendChild(c); });
+    m.appendChild(g);
+
+    var row=el("div","grid"); row.style.gridTemplateColumns="1.3fr 1fr"; row.style.marginTop="14px";
+    // progress card
+    var p=el("div","card");
+    p.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Study progress</h3>'+statChip("active")+'</div><div class="card-sub">Phase 6 of 7 — Assemble deliverables</div>';
+    var pr=el("div"); pr.style.cssText="display:flex;gap:20px;align-items:center;margin-top:14px";
+    pr.innerHTML=ring(86)+'<div style="flex:1"><div style="font-size:13px;font-weight:600;margin-bottom:8px">Next up</div>'+
+      '<div class="step active" style="border:none;padding:4px 0"><span class="sdot"></span> Board presentation deck — drafting now</div>'+
+      '<div class="step gate" style="border-top:1px solid var(--hairline-2);padding:8px 0"><span class="sdot"></span> PM final review &amp; approval</div>'+
+      '<button class="btn primary sm" style="margin-top:10px" data-go="deliver">Go to deliverables →</button></div>';
+    p.appendChild(pr); row.appendChild(p);
+    // project card
+    var pc=el("div","card");
+    pc.innerHTML='<h3>Demo Unified School District</h3><div class="card-sub">Per-project engagement · FERPA-governed</div>'+
+      '<div style="margin-top:12px;display:flex;flex-direction:column;gap:9px;font-size:13px">'+
+      row2("Schools","14 elementary · 3 middle · 2 high")+
+      row2("Study areas","132")+
+      row2("PM","Cassondra T.")+
+      row2("Deliverables","Report · Board deck · 6 maps")+
+      row2("Confidentiality","FERPA · NDA · data privacy")+'</div>';
+    row.appendChild(pc);
+    m.appendChild(row);
+    return m;
+  };
+  function row2(k,v){return '<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--muted)">'+k+'</span><span style="font-weight:600;text-align:right">'+v+'</span></div>';}
+  function ring(p){ var r=52,c=2*Math.PI*r, off=c*(1-p/100);
+    return '<div class="prog-ring"><svg width="120" height="120" viewBox="0 0 120 120"><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="var(--hairline)" stroke-width="10"/><circle cx="60" cy="60" r="'+r+'" fill="none" stroke="var(--brand)" stroke-width="10" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+off+'"/></svg><div class="pt">'+p+'%</div></div>';
+  }
+
+  VIEWS.process=function(){
+    var m=el("div");
+    m.appendChild(head("Process","The 38-step Demographic &amp; Enrollment Study, folded into 7 phases with the real human sign-off gates. Click a phase to expand; approve a gate to advance."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>Legend:</strong> ✓ complete · ● in progress · ◕ awaiting a human sign-off (gate). Demeter can't skip a gate — it prepares everything and waits for the Project Manager."));
+    m.insertAdjacentHTML("beforeend",'<div class="card" style="border-left:4px solid var(--brand);margin-bottom:14px"><div style="font-size:13px;line-height:1.55"><strong>Demeter’s build scope = the deliverables.</strong> Data intake and GIS &amp; geocoding are <strong>already built (Aditya)</strong>; the factors &amp; forecast run in <strong>ArcGIS + SchoolSite Pro</strong>. Demeter <strong>imports those exported files</strong> (Excel, PDF, map PNGs — no live GIS integration), proves every number ties out, and <strong>makes the report + board deck</strong>, then runs review → deliver → close — the phases tagged <span class="chip brand">Demeter builds</span> below. Upstream is shown for context.</div></div>');
+    var SRC=["Already built · Aditya","Already built · Aditya","Already built · Aditya · ArcGIS","Existing · ArcGIS + SchoolSite Pro","Existing · SchoolSite Pro","Demeter builds","Demeter builds"];
+    PHASES.forEach(function(ph,i){
+      var d=el("div","phase "+ph.status+(i===5?" open":"")+(/Demeter/.test(SRC[i])?" demeter":""));
+      var icon = ph.status==="done"?"✓":(i+1);
+      d.innerHTML='<div class="phase-head"><div class="phase-idx">'+icon+'</div><div style="flex:1"><div class="phase-title">'+ph.t+'</div><div class="phase-meta">'+ph.meta+'</div></div>'+srcChip(SRC[i])+statChip(ph.status)+'<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" style="margin-left:8px"><path d="M6 9l6 6 6-6"/></svg></div>';
+      var body=el("div","phase-body");
+      ph.steps.forEach(function(s){
+        var st=el("div","step "+s.s);
+        var gateBtn = (s.s==="gate" && STATE.role==="Project Manager") ? '<button class="btn primary sm" data-gate="'+ph.t+'">Approve &amp; continue</button>' : '<span class="chip '+(s.s==="gate"?"warn":s.s==="done"?"ok":s.s==="active"?"brand":"")+'">'+s.ty+'</span>';
+        st.innerHTML='<span class="sdot"></span><span>'+s.n+'</span><span class="stype">'+gateBtn+'</span>';
+        body.appendChild(st);
+      });
+      d.appendChild(body);
+      $(".phase-head",d).onclick=function(e){ if(e.target.closest("[data-gate]"))return; d.classList.toggle("open"); };
+      m.appendChild(d);
+    });
+    return m;
+  };
+
+  VIEWS.intake=function(){
+    var m=el("div");
+    m.appendChild(head("Data Intake &amp; QA","Read-only view of the district data intake. Demeter imports the exported, validated files to build the deliverables."));
+    m.insertAdjacentHTML("beforeend", srcBanner("<strong>Read-only — not built by Demeter.</strong> Intake &amp; validation run in <strong>Aditya's existing tool</strong> (against the SY_2526 Data Verification Form). Demeter <strong>imports the exported files</strong> — file-based, no live integration."));
+    var g=el("div","grid"); g.style.gridTemplateColumns="1fr 1fr";
+    var checks=[["Cover & district info","ok","complete"],["Student 2025-26 … 2021-22","ok","5 years present"],["School Verification","ok","19 schools matched"],["Preliminary Analysis","ok","generated"],["Signature Page","warn","awaiting district e-sign"]];
+    var c1=el("div","card"); c1.innerHTML='<h3>Verification checklist</h3><div class="card-sub">SY_2526_Data Verification Form</div>';
+    var list=el("div"); list.style.marginTop="10px";
+    checks.forEach(function(ck){ var r=el("div"); r.style.cssText="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--hairline-2);font-size:13px";
+      r.innerHTML='<span class="chip '+ck[1]+'"><span class="cdot"></span></span><span style="flex:1">'+ck[0]+'</span><span style="color:var(--muted);font-size:12px">'+ck[2]+'</span>'; list.appendChild(r); });
+    c1.appendChild(list); g.appendChild(c1);
+
+    var c2=el("div","card"); c2.innerHTML='<h3>Received &amp; validated</h3><div class="card-sub">From Aditya’s intake tool · ingested by Demeter</div>';
+    var drop=el("div"); drop.style.cssText="margin-top:12px;border:1px solid var(--hairline);border-radius:10px;padding:16px;color:var(--muted);font-size:13px";
+    drop.innerHTML='<div class="chip ok" style="margin-bottom:8px"><span class="cdot"></span> 6 files received &amp; validated</div><div style="font-size:12px">Student_2025-26.xlsx · Birthrate.xlsx · MobilityFactors.xlsx · SYF.xlsx · Forecast.xlsx · DevList.xlsx</div><div style="margin-top:8px;color:var(--ok);font-weight:600">✓ Checked against requested data — 100% match</div>';
+    c2.appendChild(drop);
+    c2.insertAdjacentHTML("beforeend",'<div style="margin-top:12px;font-size:12px;color:var(--muted)">Gaps are handled in the intake tool with a guided manual-entry step; Demeter only ingests a validated dataset.</div>');
+    g.appendChild(c2);
+    m.appendChild(g);
+    return m;
+  };
+
+  VIEWS.factors=function(){
+    var m=el("div");
+    m.appendChild(head("Forecast Factors","Demeter ingests your finished factor workbooks and reconciles every number — it doesn't recompute them. Analysts keep the math in the workbooks."));
+    m.insertAdjacentHTML("beforeend", srcBanner("<strong>Read-only — computed in ArcGIS + SchoolSite Pro.</strong> Demeter <strong>imports</strong> these exported workbook outputs and reconciles them; it does not recompute them. Shown so you can see what feeds the report."));
+    var tabs=tabbar([["birth","Birth &amp; Capture"],["mobility","Mobility"],["syf","Student Yield"],["dev","Development"]]);
+    m.appendChild(tabs.bar);
+    // birth
+    var b=tabs.pane("birth"); b.classList.add("active");
+    b.appendChild(chartCard("Historic births → kindergarten capture","Live births 5 years prior drive the incoming K class",
+      lineChart([{name:"Capture rate",color:PAL().brand,pts:CAPTURE.slice(0,6)}],["2016","17","18","19","20","21"],{fmt:function(v){return (v*100).toFixed(0)+"%";},min:0.7,max:0.9})));
+    var bt=el("div","card"); bt.style.marginTop="14px"; bt.innerHTML='<h3>Table 1 · Birth Factors</h3><div class="card-sub">SY_2526_Birthrate Analysis → K District Rate</div>';
+    bt.appendChild(tableEl(["Birth year","Live births","K enrollment (+5y)","Capture rate"],BIRTHS.map(function(r){return [r[0],fmt(r[1]),fmt(r[2]),pct(r[3])];}),[false,true,true,true]));
+    b.appendChild(bt);
+    b.appendChild(reconInline("Ties to Salary/forecast base — capture-rate trend confirms structural decline, not an anomaly."));
+    // mobility
+    var mo=tabs.pane("mobility");
+    var mt=el("div","card"); mt.innerHTML='<h3>Table 2 · Mobility Factors</h3><div class="card-sub">SY_2526_MobilityFactors → Standardized · 1.00 = 100% pass-through</div>';
+    mt.appendChild(tableEl(["Grade step","K→1","1→2","4→5","5→6","8→9","11→12"],[["Districtwide","1.02","1.01","0.97","0.96","1.05","1.01"]],[false,true,true,true,true,true,true]));
+    mo.appendChild(mt);
+    mo.appendChild(pnote("A factor below 1.00 is a net student loss for that grade step; above 1.00 a net gain. Demo USD shows an influx into 9th grade and a dip at 5→6."));
+    // syf
+    var sy=tabs.pane("syf");
+    sy.appendChild(chartCard("Student Yield Factors by housing type","Students generated per new unit (applied to planned development)",
+      barChart(SYF.map(function(r){return {label:r[0],value:r[1]};}),{single:PAL().brand,fmt:function(v){return v.toFixed(3);},max:0.5})));
+    sy.appendChild(pnote("For every 100 single-family detached homes built in the last five years, Demo USD gains ≈ 48 school-age children; ≈ 18 for townhomes; ≈ 12 for apartments."));
+    // dev
+    var dv=tabs.pane("dev");
+    dv.appendChild(chartCard("Residential development units by type","3,010 units in the forecast across 55 projects",
+      barChart(DEV.map(function(r,i){return {label:r[0],value:r[1],color:[PAL().c1,PAL().c2,PAL().c3][i]};}),{fmt:fmt,max:1900,cat:true})));
+    dv.appendChild(pnote("59% of forecast units are apartments. 100 apartments are expected to yield ≈ 11 elementary, 6 middle and 7 high-school students."));
+    return m;
+  };
+  function reconInline(t){ var d=el("div","card"); d.style.marginTop="14px"; d.style.borderColor="var(--ok)"; d.innerHTML='<div style="display:flex;gap:10px;align-items:center;font-size:13px"><span class="chip ok"><span class="cdot"></span>Reconciled</span><span style="color:var(--muted)">'+t+'</span></div>'; return d; }
+  function pnote(t){ var d=el("div","card"); d.style.marginTop="14px"; d.innerHTML='<div style="font-size:13px;color:var(--muted);line-height:1.6">'+t+'</div>'; return d; }
+
+  VIEWS.forecast=function(){
+    var m=el("div");
+    m.appendChild(head("Forecasts","The residence-based, modified-cohort forecast — districtwide and school-level — with the 10-year outlook the board sees."));
+    m.insertAdjacentHTML("beforeend", srcBanner("<strong>Read-only — produced in SchoolSite Pro.</strong> Demeter <strong>imports the exported</strong> residence-based, modified-cohort forecast and reconciles it; the math lives in the forecasting tool. Shown here for the report (headline horizons 5- &amp; 10-year, with capacity)."));
+    m.appendChild(chartCard("10-year resident forecast by grade band","Demo Unified School District — SY 2025/26 → 2034/35",
+      lineChart([
+        {name:"Elementary (K-5)",color:PAL().c1,pts:ENR.Elementary},
+        {name:"Middle (6-8)",color:PAL().c2,pts:ENR.Middle},
+        {name:"High (9-12)",color:PAL().c3,pts:ENR.High}
+      ],YEARS,{fmt:fmt,min:1800,max:6000})));
+    var t=el("div","card"); t.style.marginTop="14px"; t.innerHTML='<h3>School-level resident forecast (elementary sample)</h3><div class="card-sub">SY_2526_Forecast Summary by Residence — Schools · reconciles to districtwide</div>';
+    var rows=SCHOOLS.map(function(s){return [s[0],s[1],fmt(s[2]),fmt(s[3]),fmt(s[4]),(s[5]>0?'<span class="trend-up">▲ '+s[5]+'%</span>':'<span class="trend-down">▼ '+Math.abs(s[5])+'%</span>')];});
+    t.appendChild(tableEl(["School","Grades","Capacity","Resident 25/26","Resident 30/31","5-yr change"],rows,[false,false,true,true,true,true]));
+    m.appendChild(t);
+    // attendance matrix (compact sample)
+    var am=el("div","card"); am.style.marginTop="14px"; am.innerHTML='<h3>Attendance Matrix — Elementary (sample)</h3><div class="card-sub">SY_2526_Attendance Matrix · where students live (rows) vs attend (columns); rows &amp; columns balance with transfers</div>';
+    am.appendChild(tableEl(["Residence ↓ / Attends →","Cedar Grove","Maple Ridge","Lakeshore","Out-of-area","Residence total"],[
+      ["Cedar Grove ES","398","9","5","6","418"],
+      ["Maple Ridge ES","12","489","7","4","512"],
+      ["Lakeshore ES","6","8","571","9","594"],
+      ["<strong>Enrollment total</strong>","<strong>416</strong>","<strong>506</strong>","<strong>583</strong>","<strong>—</strong>","<strong>1,524</strong>"]
+    ],[false,true,true,true,true,true]));
+    m.appendChild(am);
+    // student accounting summary
+    var sa=el("div","card"); sa.style.marginTop="14px"; sa.innerHTML='<h3>Student Accounting Summary</h3><div class="card-sub">SY_2526_Student Accounting Summary · reconciles to reported enrollment</div>';
+    sa.appendChild(tableEl(["Category","Students"],[["Total reported enrollment","10,595"],["Used in resident forecast","10,111"],["Outside district boundary","401"],["Unmatched (geocode)","83"]],[false,true]));
+    m.appendChild(sa);
+    return m;
+  };
+
+  VIEWS.recon=function(){
+    var m=el("div");
+    m.appendChild(head("Reconciliation","The trust layer. Every figure Demeter ingests is proven to tie out before a draft is ever produced — mismatches surface here, not in front of the client."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>Why it matters:</strong> the manifest's biggest risk is a wrong number reaching a board deck. Demeter enforces the report's own reconciliation rules automatically. Try the toggle to see how a mismatch is caught."));
+    var wrap=el("div");
+    function draw(bad){
+      wrap.innerHTML="";
+      RECON.forEach(function(r,i){
+        var isBad = bad && i===2;
+        var d=el("div","recon"+(isBad?" bad":""));
+        d.innerHTML='<div class="rl"></div><div class="rmeta"><div class="rname">'+r.name+'</div><div class="rdesc">'+r.desc+'</div></div>'+
+          '<div class="rnums">'+(isBad?'<span style="color:var(--crit)">10,420 ≠ 10,392</span>':r.l)+'</div>'+
+          (isBad?'<span class="chip crit"><span class="cdot"></span>Off by 28</span>':'<span class="chip ok"><span class="cdot"></span>Tied</span>');
+        wrap.appendChild(d);
+      });
+      if(bad){ var w=el("div","card"); w.style.borderColor="var(--crit)"; w.style.marginTop="6px";
+        w.innerHTML='<div style="font-size:13px"><strong style="color:var(--crit)">Blocked before draft.</strong> Enrollment forecast doesn\'t reconcile to approved assumptions (28 students). Demeter routes this to the analyst with the exact rows that don\'t sum — the report cannot be assembled until it ties out.</div>'; wrap.appendChild(w); }
+    }
+    var bar=el("div"); bar.style.cssText="display:flex;gap:10px;align-items:center;margin-bottom:12px";
+    var toggle=el("button","btn sm",'Simulate a mismatch'); var on=false;
+    toggle.onclick=function(){ on=!on; draw(on); toggle.textContent=on?"Reset to all-tied":"Simulate a mismatch"; toggle.classList.toggle("primary",!on); };
+    bar.appendChild(toggle); bar.insertAdjacentHTML("beforeend",'<span style="font-size:12px;color:var(--muted)">5 tie-out rules enforced automatically</span>');
+    m.appendChild(bar); m.appendChild(wrap); draw(false);
+    return m;
+  };
+
+  VIEWS.deliver=function(){
+    var m=el("div");
+    m.appendChild(head("Deliverables","The client-ready artifacts, assembled from ingested outputs — modeled cell-for-cell on MGT's real Report and 35-slide deck. Same names, same section order, same SY_2526 IDs."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>★ This is what Demeter builds.</strong> The report + board deck, assembled from the ingested outputs — modeled cell-for-cell on MGT's real Report and 35-slide deck (same names, section order, SY_2526 IDs). Numbers come from the reconciled data; narrative is AI-drafted to the template, then a human approves. Maps drop into named slots (Map 1–6)."));
+    var tabs=tabbar([["report","Report (.docx)"],["deck","Board Deck (.pptx)"],["maps","Maps"]]);
+    m.appendChild(tabs.bar);
+    // report
+    var rp=tabs.pane("report"); rp.classList.add("active");
+    var shell=el("div","report-shell");
+    var toc=el("div","report-toc");
+    var page=el("div","report-page");
+    function showSec(k){ $$(".toc-item",toc).forEach(function(x){x.classList.toggle("active",x.dataset.k===k);}); page.innerHTML=(REPORT_BODY[k]||["<h2>Section</h2>"]).map(function(t,i){return i===0?t:'<p class="doc-p">'+t+'</p>';}).join(""); }
+    REPORT_TOC.forEach(function(s){ var it=el("div","toc-item"); it.dataset.k=s[0]; it.innerHTML='<span class="tnum">'+s[0]+'</span> '+s[1]; it.onclick=function(){showSec(s[0]);}; toc.appendChild(it); });
+    shell.appendChild(toc); shell.appendChild(page); rp.appendChild(shell); showSec("ES");
+    var dl=el("div"); dl.style.cssText="margin-top:12px;display:flex;gap:8px;align-items:center";
+    dl.innerHTML='<span class="chip brand">SY_2526_Student Forecast Report (ID #054)</span>';
+    var b=el("button","btn primary sm",'Assemble report'); b.onclick=function(){toast("Report assembled from reconciled outputs");}; dl.appendChild(b);
+    rp.appendChild(dl);
+    // deck
+    var dk=tabs.pane("deck");
+    var sg=el("div","slide-grid");
+    DECK.forEach(function(t,i){ var s=el("div","slide"); s.innerHTML='<div class="sthumb"><span class="snum">'+(i+1)+'</span>'+(i===0?'<strong style="color:var(--ink);font-size:12px">Demo USD</strong>':(/Map|Density|Spatial/.test(t)?'🗺️':'▦'))+'</div><div class="scap">'+t+'</div>'; sg.appendChild(s); });
+    dk.appendChild(sg);
+    dk.insertAdjacentHTML("beforeend",'<div style="margin-top:12px;font-size:12px;color:var(--muted)">35-slide board deck · SY_2526_Student Forecast Presentation (ID #053)</div>');
+    // maps
+    var mp=tabs.pane("maps");
+    mp.insertAdjacentHTML("beforeend",'<div style="font-size:13px;color:var(--muted);margin-bottom:10px">Export from ArcGIS Pro as a <strong style="color:var(--ink)">map series → PNG @ 300 DPI, "Page name as suffix"</strong>. Demeter matches each file to its slot by the map title — no manual naming.</div>');
+    MAPS.forEach(function(mm,i){ var filled=i<2; var s=el("div","mapslot"+(filled?" filled":""));
+      s.innerHTML='<div class="mapthumb">'+(filled?'🗺️':'—')+'</div><div style="flex:1"><div style="font-weight:640;font-size:13px">'+mm[0]+' · '+mm[1]+'</div><div style="font-size:11.5px;color:var(--muted)">'+(filled?'map-'+(i+1)+'.png · 300 DPI · placed':'awaiting export')+'</div></div>'+(filled?'<span class="chip ok"><span class="cdot"></span>Placed</span>':'<button class="btn sm" data-map="'+i+'">Attach</button>');
+      mp.appendChild(s);
+    });
+    mp.addEventListener("click",function(e){ var b=e.target.closest("[data-map]"); if(b){ var row=b.closest(".mapslot"); row.classList.add("filled"); b.outerHTML='<span class="chip ok"><span class="cdot"></span>Placed</span>'; $(".mapthumb",row).textContent="🗺️"; toast("Map placed into report + deck");} });
+    return m;
+  };
+
+  VIEWS.evals=function(){
+    var m=el("div");
+    m.appendChild(head("Evals &amp; Quality","Every build is measured on a golden set before it's trusted. Here's how Demeter scores on the Demo Unified data."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>The north star:</strong> <em>zero silently-wrong numbers</em>. These checks run on real documents across many districts &amp; years and compare Demeter's output to the actual deliverables — correct-or-flagged, never quietly wrong."));
+    var g=el("div","grid"); g.style.gridTemplateColumns="repeat(auto-fit,minmax(190px,1fr))";
+    [["Golden-set pass rate","100%","24 / 24 districts"],["Reconciliation accuracy","100%","penny-exact tie-outs"],["Factor ingestion match","100%","vs source workbooks"],["Silently-wrong outputs","0","the north star"]].forEach(function(k){ var c=el("div","card stat"); c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>'; g.appendChild(c); });
+    m.appendChild(g);
+    var t=el("div","card"); t.style.marginTop="14px"; t.innerHTML='<h3>Golden-set checks</h3><div class="card-sub">Real documents in → compared to the actual deliverable</div>';
+    var rows=[["Birth &amp; capture rate","Match to source workbook","Pass","100%"],["Mobility factors","Per-grade values","Pass","100%"],["Student yield factors","Per housing type","Pass","100%"],["Districtwide forecast","Ties to school-level Σ","Pass","100%"],["Attendance matrix","Residence vs enrollment balance","Pass","100%"],["Report narrative","Fidelity vs MGT template","Reviewed","human-approved"]];
+    t.appendChild(tableEl(["Check","What it verifies","Status","Score"],rows.map(function(r){return [r[0],r[1],'<span class="chip '+(r[2]==="Pass"?"ok":"brand")+'"><span class="cdot"></span>'+r[2]+'</span>',r[3]];}),[false,false,false,true]));
+    m.appendChild(t);
+    return m;
+  };
+
+  VIEWS.feedback=function(){
+    var m=el("div");
+    m.appendChild(head("Feedback","Every screen has a 👍 / 👎. Down-votes ask what to improve. Everything lands here for the team — this is how the product keeps getting better."));
+    m.insertAdjacentHTML("beforeend", howto("This mirrors the standing feedback loop on every MGT build: first-value, AI-output quality, and trust — captured, stored, and reviewed here."));
+    var wrap=el("div","fb-log");
+    function draw(){ wrap.innerHTML=""; if(!STATE.feedback.length){ wrap.innerHTML='<div class="card" style="color:var(--muted);font-size:13px">No feedback yet — use the 👍 / 👎 on any screen header and it appears here.</div>'; return; }
+      STATE.feedback.forEach(function(f){ var r=el("div","fb-row");
+        r.innerHTML='<span class="chip '+(f.dir==="up"?"ok":"crit")+'">'+(f.dir==="up"?"👍 helpful":"👎 needs work")+'</span><div style="flex:1"><div style="font-weight:600">'+f.where+'</div>'+(f.note?'<div style="color:var(--muted);margin-top:2px">“'+f.note+'”</div>':'')+'<div style="color:var(--muted);font-size:11px;margin-top:3px">'+f.who+' · '+f.role+' · '+f.when+'</div></div>'; wrap.appendChild(r); });
+    }
+    m.appendChild(wrap); draw();
+    return m;
+  };
+
+  /* ---------------- shared UI builders ---------------- */
+  function tabbar(items){
+    var bar=el("div","tabs"); var panes={};
+    var api={bar:bar, pane:function(k){return panes[k];}};
+    items.forEach(function(it,i){ var b=el("button","tab"+(i===0?" active":""),it[1]); b.dataset.k=it[0]; bar.appendChild(b);
+      var p=el("div","tabpane"); p.dataset.k=it[0]; panes[it[0]]=p; });
+    // append panes after bar via a container
+    var host=el("div"); host.appendChild(bar); Object.keys(panes).forEach(function(k){host.appendChild(panes[k]);});
+    bar.addEventListener("click",function(e){ var b=e.target.closest(".tab"); if(!b)return; $$(".tab",bar).forEach(function(x){x.classList.remove("active");}); b.classList.add("active"); Object.keys(panes).forEach(function(k){panes[k].classList.toggle("active",k===b.dataset.k);}); });
+    api.bar=host; return api;
+  }
+  function chartCard(title,sub,svg){ var c=el("div","card"); c.innerHTML='<h3>'+title+'</h3><div class="card-sub">'+sub+'</div>'; var w=el("div"); w.style.cssText="overflow-x:auto;margin-top:10px"; w.appendChild(svg); c.appendChild(w); return c; }
+  function tableEl(cols,rows,numCols){ var w=el("div","table-wrap"); var t=el("table");
+    var thead='<tr>'+cols.map(function(c,i){return '<th class="'+(numCols&&numCols[i]?"n":"")+'">'+c+'</th>';}).join("")+'</tr>';
+    var tb=rows.map(function(r){return '<tr>'+r.map(function(cell,i){return '<td class="'+(numCols&&numCols[i]?"n":"")+'">'+cell+'</td>';}).join("")+'</tr>';}).join("");
+    t.innerHTML='<thead>'+thead+'</thead><tbody>'+tb+'</tbody>'; w.appendChild(t); return w;
+  }
+
+  /* ---------------- charts (SVG, hover) ---------------- */
+  var TIP=null;
+  function showTip(x,y,txt){ if(!TIP)TIP=$("#tip"); TIP.textContent=txt; TIP.style.left=(x+12)+"px"; TIP.style.top=(y-10)+"px"; TIP.style.opacity="1"; }
+  function hideTip(){ if(TIP)TIP.style.opacity="0"; }
+
+  function lineChart(series,labels,opt){
+    opt=opt||{}; var W=680,H=260,pad={l:46,r:16,t:14,b:28};
+    var min=opt.min, max=opt.max;
+    var ns="http://www.w3.org/2000/svg";
+    var svg=document.createElementNS(ns,"svg"); svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width","100%"); svg.style.maxWidth=W+"px"; svg.setAttribute("role","img");
+    var iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+    var X=function(i){return pad.l + iw*(i/(labels.length-1));};
+    var Y=function(v){return pad.t + ih*(1-(v-min)/(max-min));};
+    // grid + y labels
+    for(var g=0;g<=4;g++){ var v=min+(max-min)*g/4; var y=Y(v);
+      var ln=document.createElementNS(ns,"line"); ln.setAttribute("x1",pad.l); ln.setAttribute("x2",W-pad.r); ln.setAttribute("y1",y); ln.setAttribute("y2",y); ln.setAttribute("class","gridline"); svg.appendChild(ln);
+      var tx=document.createElementNS(ns,"text"); tx.setAttribute("x",pad.l-8); tx.setAttribute("y",y+3); tx.setAttribute("text-anchor","end"); tx.textContent=(opt.fmt?opt.fmt(v):v); svg.appendChild(tx);
+    }
+    // x labels
+    labels.forEach(function(l,i){ if(labels.length>8 && i%2) return; var tx=document.createElementNS(ns,"text"); tx.setAttribute("x",X(i)); tx.setAttribute("y",H-8); tx.setAttribute("text-anchor","middle"); tx.textContent=l; svg.appendChild(tx); });
+    // series
+    series.forEach(function(s){
+      var d=""; s.pts.forEach(function(v,i){ d+=(i?" L":"M")+X(i)+" "+Y(v); });
+      var path=document.createElementNS(ns,"path"); path.setAttribute("d",d); path.setAttribute("fill","none"); path.setAttribute("stroke",s.color); path.setAttribute("stroke-width","2.4"); path.setAttribute("stroke-linejoin","round"); path.setAttribute("stroke-linecap","round"); svg.appendChild(path);
+      // endpoint label
+      var lastX=X(s.pts.length-1), lastY=Y(s.pts[s.pts.length-1]);
+      var lbl=document.createElementNS(ns,"text"); lbl.setAttribute("x",lastX-4); lbl.setAttribute("y",lastY-8); lbl.setAttribute("text-anchor","end"); lbl.setAttribute("font-weight","700"); lbl.setAttribute("fill",s.color); lbl.textContent=(opt.fmt?opt.fmt(s.pts[s.pts.length-1]):s.pts[s.pts.length-1]); svg.appendChild(lbl);
+      s.pts.forEach(function(v,i){ var c=document.createElementNS(ns,"circle"); c.setAttribute("cx",X(i)); c.setAttribute("cy",Y(v)); c.setAttribute("r","8"); c.setAttribute("fill","transparent");
+        c.addEventListener("mousemove",function(e){ showTip(e.clientX,e.clientY,s.name+" · "+labels[i]+" · "+(opt.fmt?opt.fmt(v):v)); });
+        c.addEventListener("mouseleave",hideTip); svg.appendChild(c);
+        var dot=document.createElementNS(ns,"circle"); dot.setAttribute("cx",X(i)); dot.setAttribute("cy",Y(v)); dot.setAttribute("r","2.6"); dot.setAttribute("fill",s.color); svg.appendChild(dot);
+      });
+    });
+    var box=el("div"); box.appendChild(svg);
+    if(series.length>1){ var lg=el("div","chart-legend"); series.forEach(function(s){ lg.insertAdjacentHTML("beforeend",'<span class="lg"><span class="sw" style="background:'+s.color+'"></span>'+s.name+'</span>'); }); box.appendChild(lg); }
+    return box;
+  }
+
+  function barChart(data,opt){
+    opt=opt||{}; var ns="http://www.w3.org/2000/svg"; var rowH=44, W=680, pad={l:220,r:60,t:6,b:6};
+    var H=pad.t+pad.b+data.length*rowH;
+    var svg=document.createElementNS(ns,"svg"); svg.setAttribute("viewBox","0 0 "+W+" "+H); svg.setAttribute("width","100%"); svg.style.maxWidth=W+"px";
+    var iw=W-pad.l-pad.r; var max=opt.max;
+    data.forEach(function(d,i){
+      var y=pad.t+i*rowH+8, bh=rowH-20;
+      var lab=document.createElementNS(ns,"text"); lab.setAttribute("x",pad.l-12); lab.setAttribute("y",y+bh/2+4); lab.setAttribute("text-anchor","end"); lab.setAttribute("fill","var(--ink)"); lab.setAttribute("font-size","12"); lab.textContent=d.label; svg.appendChild(lab);
+      var bg=document.createElementNS(ns,"rect"); bg.setAttribute("x",pad.l); bg.setAttribute("y",y); bg.setAttribute("width",iw); bg.setAttribute("height",bh); bg.setAttribute("rx","4"); bg.setAttribute("fill","var(--surface-3)"); svg.appendChild(bg);
+      var w=iw*(d.value/max);
+      var bar=document.createElementNS(ns,"rect"); bar.setAttribute("x",pad.l); bar.setAttribute("y",y); bar.setAttribute("width",Math.max(w,2)); bar.setAttribute("height",bh); bar.setAttribute("rx","4"); bar.setAttribute("fill",d.color||opt.single);
+      bar.addEventListener("mousemove",function(e){ showTip(e.clientX,e.clientY,d.label+" · "+(opt.fmt?opt.fmt(d.value):d.value)); }); bar.addEventListener("mouseleave",hideTip);
+      svg.appendChild(bar);
+      var vl=document.createElementNS(ns,"text"); vl.setAttribute("x",pad.l+w+8); vl.setAttribute("y",y+bh/2+4); vl.setAttribute("fill","var(--ink)"); vl.setAttribute("font-size","12"); vl.setAttribute("font-weight","700"); vl.textContent=(opt.fmt?opt.fmt(d.value):d.value); svg.appendChild(vl);
+    });
+    var box=el("div"); box.appendChild(svg); return box;
+  }
+
+  /* ---------------- Ask Demeter ---------------- */
+  var ASK={
+    home:["Where do I start?","What does Demeter do for me?","What's the current status?"],
+    process:["What's a “gate”?","Why is the forecast locked?","How do I approve a step?"],
+    intake:["What files should the district send?","What if a file won't open?","How is data validated?"],
+    factors:["Does Demeter recompute my factors?","What is a capture rate?","What are yield factors?"],
+    forecast:["What is residence-based?","Why does enrollment differ from resident?","What horizons are shown?"],
+    recon:["What does reconciliation check?","What happens on a mismatch?","Which number is source of truth?"],
+    deliver:["Where do the numbers come from?","How do maps get in?","Can I edit the narrative?"],
+    evals:["What's the north star?","How is accuracy measured?","What's on the golden set?"],
+    feedback:["Who sees my feedback?","What gets measured?"]
+  };
+  var ANSWERS={
+    "What's a “gate”?":"A gate is a point where a human must decide — like the PM confirming the forecast assumptions. Demeter prepares everything and waits; it never auto-approves a gate.",
+    "Why is the forecast locked?":"The forecast phase unlocks only after the PM confirms forecast assumptions (step 19). That gate protects every downstream number.",
+    "Does Demeter recompute my factors?":"No. You compute factors in your workbooks / SchoolSite Pro. Demeter ingests those finished outputs, reconciles them, and carries them into the report — no re-keying.",
+    "What is a capture rate?":"The share of a year's live births that shows up as kindergartners ~5 years later (K enrollment ÷ births 5 years prior). Demo USD's is easing from 0.83 to 0.77.",
+    "What is residence-based?":"Students are counted where they live (geocoded to their address), not where they attend. It's the accurate basis for deciding where future facilities are needed.",
+    "What does reconciliation check?":"Five tie-outs: study areas→district, school→district, enrollment→assumptions, attendance-matrix balance, and the student accounting summary. All must tie before a draft.",
+    "Where do the numbers come from?":"Straight from your reconciled workbooks. Narrative is AI-drafted to MGT's template and voice; a human approves. Nothing is invented.",
+    "Where do I start?":"Start on Home, then move left-to-right: Data Intake → Factors → Forecasts → Reconciliation → Deliverables. The pulsing 'Next' item always shows your current step.",
+    "What does Demeter do for me?":"It runs the whole enrollment study: QAs the district's data, ingests your factor & forecast workbooks, proves every number ties out, and assembles the report and board deck — while you keep GIS and the math in your own tools.",
+    "What's the current status?":"Demo Unified is at 86% — Phase 6 of 7. The board deck is drafting; the last step is your final PM review & approval.",
+    "How do I approve a step?":"As the Project Manager, open Process, expand the phase with a gate, and click 'Approve & continue' — that advances the study and unlocks the next steps.",
+    "What files should the district send?":"Current + prior 4 years of student data, the school list & capacities, and boundary sources. Demeter checks completeness by content, not filename.",
+    "What if a file won't open?":"There's never an error — Demeter turns it into a friendly guided manual-entry step that tells you exactly what to enter and where to find it on the document.",
+    "How is data validated?":"Against the SY_2526 Data Verification Form (cover, per-year student sheets, school verification, preliminary analysis, signature page), with gaps flagged before anything is built on the data.",
+    "What are yield factors?":"Students generated per new housing unit by type. Demo Unified yields 0.475 per single-family detached home, 0.178 per townhome, 0.118 per apartment — applied to planned development.",
+    "Why does enrollment differ from resident?":"Resident counts students where they live (for facility planning); enrollment counts where they attend (for staffing/budget). Transfers explain the gap — see the attendance matrix.",
+    "What horizons are shown?":"5-year and 10-year, residence-based, with capacity — the standard board horizons.",
+    "What happens on a mismatch?":"The report can't be assembled. Demeter routes the exact non-summing rows to the analyst and blocks the draft until it ties out — nothing wrong reaches the client.",
+    "Which number is source of truth?":"The districtwide resident forecast is the spine; school-level and enrollment views must reconcile up to it.",
+    "How do maps get in?":"Analysts export from ArcGIS Pro as a map series (PNG @ 300 DPI, 'Page name as suffix'); Demeter matches each file to its slot by the map title — no manual naming.",
+    "Can I edit the narrative?":"Yes — AI drafts the prose to MGT's template and voice; a human reviews and edits before approval. Numbers come from the reconciled workbooks and aren't invented.",
+    "What's the north star?":"Zero silently-wrong numbers. Every output is correct-or-flagged — never quietly wrong.",
+    "How is accuracy measured?":"On a golden set of real documents across many districts and years, comparing Demeter's output to the actual deliverables — reconciliation is penny-exact.",
+    "What's on the golden set?":"Birth/capture, mobility, yield, districtwide & school forecasts, attendance matrix, and report-narrative fidelity — each with a pass/score.",
+    "Who sees my feedback?":"The product team — every thumbs up/down (and any comment on a down-vote) lands on the Feedback screen with who, role, and screen.",
+    "What gets measured?":"Time saved / first value, AI-output quality, human review & override, trust, and ROI — not generic satisfaction."
+  };
+  function askRender(){
+    var body=$("#drawerBody"); body.innerHTML="";
+    body.appendChild(msg("bot","Hi "+STATE.first+" — I'm Demeter. Ask me anything about the <strong>"+viewTitle(STATE.view)+"</strong> screen."));
+    var s=el("div","sugg"); (ASK[STATE.view]||[]).forEach(function(q){ var b=el("button",null,q); b.onclick=function(){ askAsk(q); }; s.appendChild(b); }); body.appendChild(s);
+  }
+  function msg(who,html){ var d=el("div","msg "+who); d.innerHTML=html; return d; }
+  function askAsk(q){ askAsk2(q); } // alias guard
+  function askAsk2(q){ var body=$("#drawerBody"); body.appendChild(msg("user",q));
+    var a=ANSWERS[q]||"Good question. In short: Demeter mirrors MGT's real process — it orchestrates the study, ingests your workbooks, proves the numbers tie out, and assembles the report &amp; deck to your existing templates. Ask me about any specific screen and I'll walk you through it.";
+    setTimeout(function(){ body.appendChild(msg("bot",a)); body.scrollTop=body.scrollHeight; },160); body.scrollTop=body.scrollHeight;
+  }
+  function askAsk(q){ askAsk2(q); }
+  function viewTitle(v){ var map={home:"Home",process:"Process",intake:"Data Intake & QA",factors:"Forecast Factors",forecast:"Forecasts",recon:"Reconciliation",deliver:"Deliverables",evals:"Evals & Quality",feedback:"Feedback"}; return map[v]||v; }
+
+  /* ---------------- nav + render ---------------- */
+  function buildNav(){
+    var side=$("#side"); side.innerHTML="";
+    NAV.forEach(function(grp){
+      side.appendChild(el("div","nav-group-label",grp.g));
+      grp.items.forEach(function(it){
+        var stg=STAGE[it[0]];
+        var locked = stg && stg>STATE.unlocked;
+        var isNext = stg && stg===STATE.unlocked && STATE.view!==it[0];
+        var b=el("button","nav-item"+(STATE.view===it[0]?" active":"")+(locked?" locked":"")+(isNext?" next":""));
+        var right = locked ? '<svg class="lockico" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>'
+                  : isNext ? '<span class="badge" style="background:var(--brand);color:var(--on-brand)">Next</span>'
+                  : (it[3]?'<span class="badge '+(it[4]||"")+'">'+it[3]+'</span>':'');
+        b.innerHTML='<svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="'+it[2]+'"/></svg><span>'+it[1]+'</span>'+right;
+        b.onclick=function(){ if(locked){ toast("Locked — finish the forecast gate first, then this opens."); return; } go(it[0]); };
+        side.appendChild(b);
+      });
+    });
+  }
+  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>🌾 Demeter</span> <code>v1.0.0</code> <span>·</span> <code>GET /api/_dev/version</code> <span>·</span> <span>X-App-Version 1.0.0</span><span>·</span> <span>.template-version atlas</span> <span>·</span> <code>/docs</code> <span style="margin-left:auto">MGT AI-OG · frontend-template</span>'; return f; }
+  function go(v){ var stg=STAGE[v]; if(stg && stg>STATE.unlocked){ toast("Locked — finish the current step first."); return; } STATE.view=v; buildNav(); var main=$("#main"); main.innerHTML=""; main.appendChild((VIEWS[v]||VIEWS.home)()); main.appendChild(appFooter()); main.scrollTop=0; window.scrollTo(0,0); if($("#drawer").classList.contains("open")) askRender(); }
+
+  /* ---------------- events ---------------- */
+  document.addEventListener("click",function(e){
+    var g=e.target.closest("[data-go]"); if(g){ go(g.dataset.go); }
+    var gate=e.target.closest("[data-gate]"); if(gate){ approveGate(gate.dataset.gate); }
+  });
+  function approveGate(name){
+    // advance: mark factor phase done, activate forecast, unlock reconciliation + deliverables
+    PHASES[3].status="done"; PHASES[3].steps.forEach(function(s){s.s="done";});
+    PHASES[4].status="active"; PHASES[4].steps[0].s="done";
+    STATE.unlocked=6;
+    toast("Approved — forecast, reconciliation & deliverables unlocked"); go("process");
+  }
+
+  // login
+  $("#loginForm").addEventListener("submit",function(e){ e.preventDefault();
+    STATE.first=$("#fn").value.trim()||"there"; STATE.last=$("#ln").value.trim(); STATE.role=$("#role0").value;
+    $("#roleSelect").value=STATE.role; $("#avatar").textContent=((STATE.first[0]||"")+(STATE.last[0]||"")).toUpperCase();
+    $("#login").classList.add("hidden"); $("#shell").setAttribute("aria-hidden","false");
+    buildNav(); go("home");
+  });
+  $("#roleSelect").addEventListener("change",function(){ STATE.role=this.value; toast("Viewing as "+this.value); go(STATE.view); });
+  $("#themeBtn").addEventListener("click",function(){ var r=document.documentElement; var cur=r.getAttribute("data-theme"); var next = cur==="dark"?"light":(cur==="light"?"dark":(matchMedia("(prefers-color-scheme: dark)").matches?"light":"dark")); r.setAttribute("data-theme",next); go(STATE.view); });
+
+  // drawer
+  $("#askFab").addEventListener("click",function(){ $("#drawer").classList.add("open"); askRender(); });
+  $("#drawerClose").addEventListener("click",function(){ $("#drawer").classList.remove("open"); });
+  $("#askSend").addEventListener("click",function(){ var v=$("#askInput").value.trim(); if(v){ askAsk(v); $("#askInput").value=""; } });
+  $("#askInput").addEventListener("keydown",function(e){ if(e.key==="Enter"){ var v=this.value.trim(); if(v){ askAsk(v); this.value=""; } } });
+})();
+</script>
