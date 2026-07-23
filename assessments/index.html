@@ -324,13 +324,14 @@
   <dialog class="modal" id="changeLog" aria-labelledby="changeTitle">
     <div class="modal-head"><div style="flex:1"><div class="eyebrow">Apollo release history</div><h2 id="changeTitle">What changed</h2></div><button class="icon-btn" id="changeClose" aria-label="Close changelog">✕</button></div>
     <div class="modal-body">
+      <div class="change"><strong>1.2.0 · July 23, 2026</strong><p>Interpreted all 254 files in the Assessments-only standards archive; added authority, lifecycle, workflow-coverage, privacy, and duplicate-lineage controls; added the Standards Library; and preserved the exact 33-step Higher-Ed Technology Assessment as the workflow spine.</p></div>
       <div class="change"><strong>1.1.0 · July 22, 2026</strong><p>Added Evidence Intake for all 15 logical source files; explicit accepted, quarantined, and review states; PII and malformed-workbook safeguards; the exact 33-step map; and clear AI-draft provenance and approval language. Fixed mobile navigation and cross-domain evidence contamination.</p></div>
       <div class="change"><strong>1.0.0 · July 21, 2026</strong><p>Initial interactive Apollo workflow prototype for the supplied Higher-Ed Technology Assessment process.</p></div>
     </div>
   </dialog>
 </div>
 
-<script type="application/json" id="artifact-state">{"product":"Apollo","version":"1.1.0","workflow":"Higher-Ed Technology Assessment","workflowSteps":33,"logicalInputs":15,"workflowAuthority":"Assessments-process-map-basic.svg","crossDomainFixtures":["AlvordUSD.zip","PleasantonUSD.zip"],"piiPolicy":"aggregate-only; raw PII excluded from browser and AI prompts","draftAutoSend":false}</script>
+<script type="application/json" id="artifact-state">{"product":"Apollo","version":"1.2.0","workflow":"Higher-Ed Technology Assessment","workflowSteps":33,"logicalInputs":269,"additionalStandardsFiles":254,"standardsUniqueHashes":234,"workflowAuthority":"Assessments-process-map-basic.svg","archiveScope":"assessments-only","crossDomainFixtures":["AlvordUSD.zip","PleasantonUSD.zip"],"piiPolicy":"aggregate-only; raw PII excluded from browser and AI prompts","draftAutoSend":false}</script>
 
 <script>
 (function(){
@@ -340,7 +341,7 @@
   var el=function(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
 
   /* ---------------- state ---------------- */
-  var APP_VERSION="1.1.0";
+  var APP_VERSION="1.2.0";
   var STATE={ first:"", last:"", role:"Project Manager", view:"home", feedback:[], unlocked:5, emailStatus:"needs review" };
   var STAGE={process:1,setup:2,interviews:3,reports:4,deliver:5};
   var PAL=function(){ var cs=getComputedStyle(document.documentElement); return {c1:cs.getPropertyValue('--c1').trim(),c2:cs.getPropertyValue('--c2').trim(),c3:cs.getPropertyValue('--c3').trim(),brand:cs.getPropertyValue('--brand').trim(),ink:cs.getPropertyValue('--muted').trim(),grid:cs.getPropertyValue('--hairline-2').trim()};};
@@ -437,7 +438,7 @@
   var DECK=["Title — Demo State University Technology Assessment","Engagement Objectives","Methodology & Approach","Interview Coverage (18 / 9 domains)","Institutional Context","Current-State Maturity Heatmap","Finance & ERP Findings","HR & Payroll Findings","Student Information System Findings","Advancement & CRM Findings","Data & Analytics Findings","Infrastructure, Cloud & Security","IT Governance & Strategy","Market Overview & Peer Benchmarking","Key Findings Summary","Recommendations","Modernization Roadmap (3 Waves)","Budgetary Estimate (5-yr TCO)","Risks & Dependencies","Next Steps"];
 
   var NAV=[
-    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"],["inputs","Evidence Intake","M4 4h16v16H4zM8 8h8M8 12h8M8 16h5","15 files","ok"]]},
+    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"],["inputs","Evidence Intake","M4 4h16v16H4zM8 8h8M8 12h8M8 16h5","269 files","ok"],["standards","Standards Library","M5 4h14v16H5zM8 8h8M8 12h8M8 16h5","254","brand"]]},
     {g:"Run the engagement", items:[
       ["process","Process",  "M4 6h16M4 12h16M4 18h10", "Phase 4/5"],
       ["setup","Setup & Alignment","M14 3v5h5M6 3h9l5 5v13H6z"],
@@ -538,18 +539,45 @@
   VIEWS.inputs=function(){
     var m=el("div");
     m.appendChild(head("Evidence Intake","Every supplied file is inventoried before it can affect an assessment. The process map controls workflow; companion files add evidence, validation rules, and output guidance."));
-    m.insertAdjacentHTML("beforeend",howto("<strong>Privacy and isolation:</strong> raw student names, IDs, addresses, and other PII stay local and never enter this browser artifact or an AI prompt. Unsupported or cross-domain files remain visible but quarantined from findings."));
+    m.insertAdjacentHTML("beforeend",howto("<strong>Scope and privacy:</strong> the new 254-file archive belongs to this Assessments build only — never Demographic. Staff names, photographs, biographies, and any other PII stay local and never enter this browser artifact or an AI prompt."));
     var g=el("div","grid");g.style.gridTemplateColumns="repeat(auto-fit,minmax(190px,1fr))";
-    [["Logical files","15","15 parsed · none silently dropped"],["Workflow authority","1 SVG","exact 33-step assessment map"],["Supporting references","2 PDFs","accepted as assessment context"],["Cross-domain packages","12 files","readable · quarantined from generation"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>';g.appendChild(c);});m.appendChild(g);
+    [["Logical inputs","269","15 prior + 254 additional"],["Additional archive","254 / 254","parsed · 0 errors"],["Unique content","234 hashes","20 duplicate copies preserve lineage"],["Training video","12.399 hrs","26 files · locally interpreted"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>';g.appendChild(c);});m.appendChild(g);
     var c=el("div","card");c.style.marginTop="14px";c.innerHTML='<h3>Source disposition</h3><div class="card-sub">The status determines whether a file may support client-facing claims</div>';
     c.appendChild(tableEl(["Source","Role","Status","Use in Apollo"],[
       ["Assessments-process-map-basic.svg","Workflow spine",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Defines all 33 steps and gates"],
       ["Assessments_final_manifest_v1.pdf","Manifest",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Confirms entities, connections, and pain points"],
       ["Billable Assessment Process (1).pdf","Supporting process context",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Informs setup, outputs, and human review"],
+      ["OneDrive_2026-07-22.zip · 254 files","Assessments standards library",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Operational guidance and output fidelity; no demo-client facts"],
       ["AlvordUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests PII, multi-file intake, and domain isolation only"],
       ["PleasantonUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests malformed XLSX recovery and draft/final precedence only"]
     ],[false,false,false,false]));m.appendChild(c);
-    var p=el("div","card");p.style.marginTop="14px";p.style.borderLeft="4px solid var(--warn)";p.innerHTML='<h3>Conflict handling</h3><p class="doc-p">Pleasanton contains a stale December workbook marked <strong>DRAFT</strong> and later January/final sources. Apollo records that lineage, does not silently blend versions, and requires explicit review before any supported-domain evidence advances.</p><p class="doc-p"><strong>Parser safeguard:</strong> a workbook that declares dimension A1 but contains 13,084 rows must be recovered from sheet data, never truncated to one cell.</p>';m.appendChild(p);
+    var p=el("div","card");p.style.marginTop="14px";p.style.borderLeft="4px solid var(--brand)";p.innerHTML='<h3>Reconciled use</h3><p class="doc-p">The 254-file archive strengthens project setup, QA/QC, data verification, workbook governance, report production, and output fidelity. The <strong>exact 33-step Higher-Ed Technology Assessment remains the workflow authority</strong>.</p><p class="doc-p"><strong>Fail-closed rule:</strong> archived, not-yet-approved, sample-fact, or PII-bearing content cannot populate current client findings. Apollo keeps lineage visible and routes exceptions to human review.</p>';m.appendChild(p);
+    return m;
+  };
+
+  VIEWS.standards=function(){
+    var m=el("div");
+    m.appendChild(head("Standards Library","The additional 254-file archive is fully interpreted and assigned to Assessments only. These materials govern how work is checked and presented; they are not evidence about the demo institution."));
+    m.insertAdjacentHTML("beforeend",howto("<strong>How authority works:</strong> approved standards may guide validation, training explains execution, and samples guide structure. Archived and not-yet-approved material stays visible for lineage but cannot reach final output."));
+    var g=el("div","grid");g.style.gridTemplateColumns="repeat(auto-fit,minmax(170px,1fr))";
+    [["Approved standard","77","usable guidance","ok"],["Training","25","instruction only","brand"],["Samples","3","fidelity only","brand"],["Archived","60","lineage only","warn"],["Not yet approved","64","review required","warn"],["Staff references","25","local only","crit"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d"><span class="chip '+k[3]+'"><span class="cdot"></span>'+k[2]+'</span></div>';g.appendChild(c);});m.appendChild(g);
+    var w=el("div","card");w.style.marginTop="14px";w.innerHTML='<h3>Workflow coverage</h3><div class="card-sub">Every physical file is assigned to one operating area</div>';
+    w.appendChild(tableEl(["Operating area","Files","What Apollo learns"],[
+      ["Project initiation, QA/QC, requests, verification","78","Setup checklists, request completeness, signatures, and validation gates"],
+      ["Data setup, attendance matrices, factors","24","Controlled inputs, field rules, reconciliation, and factor provenance"],
+      ["Development research and student-yield inputs","10","Research workflow, source attribution, and review controls"],
+      ["Forecast workbooks and scenarios","20","Workbook structure, scenario lineage, formulas, and tie-outs"],
+      ["Report and presentation production","23","Human-ready Word, Excel, PDF, and presentation fidelity"],
+      ["Boundary planning and utilization","10","Map, utilization, and scenario-review patterns"],
+      ["Standards governance","64","Draft material blocked pending explicit approval"],
+      ["Cross-stage references","25","Brand and shared references; staff PII remains local"]
+    ],[false,true,false]));m.appendChild(w);
+    var r=el("div","card");r.style.marginTop="14px";r.innerHTML='<h3>Non-negotiable source rules</h3><div class="card-sub">Applied before content can affect a deliverable</div><div class="timeline" style="margin-top:12px">'+
+      '<div class="tl-row"><span class="tl-dot done"></span><div><strong>Source authority</strong><div>Current approved material wins; archive and draft variants retain lineage only.</div></div></div>'+
+      '<div class="tl-row"><span class="tl-dot done"></span><div><strong>Output fidelity</strong><div>Templates shape structure and presentation, but sample facts are never copied.</div></div></div>'+
+      '<div class="tl-row"><span class="tl-dot done"></span><div><strong>Privacy</strong><div>Names, photos, biographies, and row-level identifiers stay local and out of prompts.</div></div></div>'+
+      '<div class="tl-row"><span class="tl-dot done"></span><div><strong>Evidence boundary</strong><div>Every demo finding still traces to Higher-Ed assessment evidence — never to this standards library.</div></div></div>'+
+      '</div>';m.appendChild(r);
     return m;
   };
 
@@ -753,7 +781,8 @@
   /* ---------------- Ask Apollo ---------------- */
   var ASK={
     home:["Where do I start?","What does Apollo do for me?","What's the current status?"],
-    inputs:["Why are the ZIPs quarantined?","How is private data protected?","What happens to malformed files?"],
+    inputs:["How is the new archive used?","How is private data protected?","What happens to malformed files?"],
+    standards:["Which standards can be used?","What does review required mean?","Can samples supply client facts?"],
     process:["What's a “gate”?","Why is report-writing locked?","How do I approve a step?"],
     setup:["What does Apollo set up automatically?","Can I edit the info-request email?","How is the assessment type decided?"],
     interviews:["How does the interview loop work?","What if an interviewee doesn't reply?","When can report-writing start?"],
@@ -763,6 +792,10 @@
     feedback:["Who sees my feedback?","What gets measured?"]
   };
   var ANSWERS={
+    "How is the new archive used?":"All 254 files belong exclusively to the Assessments build. They guide validation, QA/QC, execution, governance, and output fidelity while the exact 33-step Higher-Ed Technology Assessment remains the workflow spine.",
+    "Which standards can be used?":"Only approved standards can directly guide final workflow validation. Training explains execution, samples guide structure, archived material preserves lineage, and not-yet-approved material stays blocked.",
+    "What does review required mean?":"The 64 not-yet-approved files remain visible and searchable, but Apollo fails closed: none can influence final generated work until an owner explicitly approves it.",
+    "Can samples supply client facts?":"No. Samples may guide structure, formatting, and completeness only. Their names, numbers, findings, and scenarios can never become current-client facts.",
     "Why are the ZIPs quarantined?":"They are K-12 enrollment and facilities forecasting packages, while Apollo follows the supplied Higher-Ed Technology Assessment map. Apollo fully inventories them and uses them to test intake safety, but their content cannot populate assessment findings.",
     "How is private data protected?":"Raw names, student IDs, addresses, and other PII stay local. They are excluded from this browser artifact and from AI prompts; only safe aggregate validation facts are shown.",
     "What happens to malformed files?":"Apollo fails closed, reports the problem, and preserves other valid work. For the Pleasanton workbook whose metadata says A1 despite 13,084 rows, the parser must inspect the underlying sheet data so it never silently truncates the file.",
@@ -800,7 +833,7 @@
     var a=ANSWERS[q]||"Good question. In short: Apollo mirrors MGT / Tambellini's real process — it runs the engagement end to end, drafts every deliverable from interview evidence, checks the numbers, and waits for a human to approve at each gate. Ask me about any specific screen and I'll walk you through it.";
     setTimeout(function(){ body.appendChild(msg("bot",a)); body.scrollTop=body.scrollHeight; },160); body.scrollTop=body.scrollHeight;
   }
-  function viewTitle(v){ var map={home:"Home",inputs:"Evidence Intake",process:"Process",setup:"Setup & Alignment",interviews:"Interviews",reports:"Section Reports",deliver:"Deliverables",evals:"Evals & Quality",feedback:"Feedback"}; return map[v]||v; }
+  function viewTitle(v){ var map={home:"Home",inputs:"Evidence Intake",standards:"Standards Library",process:"Process",setup:"Setup & Alignment",interviews:"Interviews",reports:"Section Reports",deliver:"Deliverables",evals:"Evals & Quality",feedback:"Feedback"}; return map[v]||v; }
 
   /* ---------------- nav + render ---------------- */
   function buildNav(){
@@ -821,7 +854,7 @@
       });
     });
   }
-  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>☀️ Apollo</span> <button class="version-link" data-changelog>Artifact build v'+APP_VERSION+' · changelog</button><span>·</span><span>33-step process map</span><span>·</span><span>15 logical inputs inventoried</span><span style="margin-left:auto">MGT AI-OG · Tambellini · frontend-template</span>'; return f; }
+  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>☀️ Apollo</span> <button class="version-link" data-changelog>Artifact build v'+APP_VERSION+' · changelog</button><span>·</span><span>33-step process map</span><span>·</span><span>254-file Assessments standards library</span><span style="margin-left:auto">MGT AI-OG · Tambellini · frontend-template</span>'; return f; }
   function go(v){ var stg=STAGE[v]; if(stg && stg>STATE.unlocked){ toast("Locked — finish the current step first."); return; } STATE.view=v; buildNav(); var main=$("#main"); main.innerHTML=""; main.appendChild((VIEWS[v]||VIEWS.home)()); main.appendChild(appFooter()); main.scrollTop=0; window.scrollTo(0,0); if($("#drawer").classList.contains("open")) askRender(); }
 
   /* ---------------- events ---------------- */
