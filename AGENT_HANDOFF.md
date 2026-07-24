@@ -27,6 +27,8 @@ section headers, and dark readable text.
 ## Current state
 
 - Branch: `gh-pages`
+- Published Assessment commit: `656c2f638fa72014f7fee427cb862bc0e4a3da29`
+- GitHub Pages deployment run `30123658194`: succeeded
 - Publication candidate SHA-256:
   `a8aa4ab53f8d85d59d947972a3c8b5282e8e4699c891af9c1967f079c8af9eb5`
 - Stable public Assessment URL:
@@ -62,9 +64,12 @@ section headers, and dark readable text.
   `git diff --check`, and a static white-text declaration sweep pass.
 - Fresh browser control is unavailable in the current runtime. Do not describe
   v1.3.2 as freshly desktop/mobile browser-verified until that check is rerun.
+- The stable GitHack URL now serves v1.3.2. Its live GET response matches the
+  canonical artifact byte-for-byte at SHA-256
+  `a8aa4ab53f8d85d59d947972a3c8b5282e8e4699c891af9c1967f079c8af9eb5`
+  and includes the v1.3.2 artifact-state and changelog markers.
 
 ## Exact next action
 
-Commit and push v1.3.2 on `gh-pages`, verify the served HTML content and SHA at the
-same stable Assessment URL, then repeat desktop/mobile visual verification when the
-managed browser runtime is available.
+Repeat desktop/mobile visual verification when the managed browser runtime is
+available. Keep future revisions on this same stable Assessment URL.
