@@ -324,13 +324,14 @@
   <dialog class="modal" id="changeLog" aria-labelledby="changeTitle">
     <div class="modal-head"><div style="flex:1"><div class="eyebrow">Apollo release history</div><h2 id="changeTitle">What changed</h2></div><button class="icon-btn" id="changeClose" aria-label="Close changelog">✕</button></div>
     <div class="modal-body">
+      <div class="change"><strong>1.3.0 · July 24, 2026</strong><p>Reconciled the Assessment Manual, final-report exemplar, and role-tagged SME and solution-architecture discovery. Added full-advisory and targeted-premium profiles, optional survey/workshop/in-person modules, the SharePoint selected-source boundary, controlled-template readiness, and editable report/deck skeletons with analyst-owned judgment.</p></div>
       <div class="change"><strong>1.1.0 · July 22, 2026</strong><p>Added Evidence Intake for all 15 logical source files; explicit accepted, quarantined, and review states; PII and malformed-workbook safeguards; the exact 33-step map; and clear AI-draft provenance and approval language. Fixed mobile navigation and cross-domain evidence contamination.</p></div>
       <div class="change"><strong>1.0.0 · July 21, 2026</strong><p>Initial interactive Apollo workflow prototype for the supplied Higher-Ed Technology Assessment process.</p></div>
     </div>
   </dialog>
 </div>
 
-<script type="application/json" id="artifact-state">{"product":"Apollo","version":"1.1.0","workflow":"Higher-Ed Technology Assessment","workflowSteps":33,"logicalInputs":15,"workflowAuthority":"Assessments-process-map-basic.svg","crossDomainFixtures":["AlvordUSD.zip","PleasantonUSD.zip"],"piiPolicy":"aggregate-only; raw PII excluded from browser and AI prompts","draftAutoSend":false}</script>
+<script type="application/json" id="artifact-state">{"product":"Apollo","version":"1.3.0","workflow":"Higher-Ed Technology Assessment","workflowSteps":33,"governedInputs":21,"engagementProfiles":["full advisory","targeted premium"],"optionalModules":["survey","workshop","in-person interviews"],"sourceWorkspace":"SharePoint selected files","finalDeliverables":["editable assessment report","editable executive presentation"],"clientReady":false,"workflowAuthority":"Assessments-process-map-basic.svg","crossDomainFixtures":["AlvordUSD.zip","PleasantonUSD.zip"],"piiPolicy":"aggregate-only; raw PII excluded from browser and AI prompts","draftAutoSend":false}</script>
 
 <script>
 (function(){
@@ -340,7 +341,7 @@
   var el=function(t,c,h){var e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
 
   /* ---------------- state ---------------- */
-  var APP_VERSION="1.1.0";
+  var APP_VERSION="1.3.0";
   var STATE={ first:"", last:"", role:"Project Manager", view:"home", feedback:[], unlocked:5, emailStatus:"needs review" };
   var STAGE={process:1,setup:2,interviews:3,reports:4,deliver:5};
   var PAL=function(){ var cs=getComputedStyle(document.documentElement); return {c1:cs.getPropertyValue('--c1').trim(),c2:cs.getPropertyValue('--c2').trim(),c3:cs.getPropertyValue('--c3').trim(),brand:cs.getPropertyValue('--brand').trim(),ink:cs.getPropertyValue('--muted').trim(),grid:cs.getPropertyValue('--hairline-2').trim()};};
@@ -437,7 +438,7 @@
   var DECK=["Title — Demo State University Technology Assessment","Engagement Objectives","Methodology & Approach","Interview Coverage (18 / 9 domains)","Institutional Context","Current-State Maturity Heatmap","Finance & ERP Findings","HR & Payroll Findings","Student Information System Findings","Advancement & CRM Findings","Data & Analytics Findings","Infrastructure, Cloud & Security","IT Governance & Strategy","Market Overview & Peer Benchmarking","Key Findings Summary","Recommendations","Modernization Roadmap (3 Waves)","Budgetary Estimate (5-yr TCO)","Risks & Dependencies","Next Steps"];
 
   var NAV=[
-    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"],["inputs","Evidence Intake","M4 4h16v16H4zM8 8h8M8 12h8M8 16h5","15 files","ok"]]},
+    {g:"Overview", items:[["home","Home","M3 11l9-8 9 8M5 9v11h14V9"],["inputs","Evidence Intake","M4 4h16v16H4zM8 8h8M8 12h8M8 16h5","21 inputs","ok"]]},
     {g:"Run the engagement", items:[
       ["process","Process",  "M4 6h16M4 12h16M4 18h10", "Phase 4/5"],
       ["setup","Setup & Alignment","M14 3v5h5M6 3h9l5 5v13H6z"],
@@ -493,7 +494,7 @@
   VIEWS.home=function(){
     var m=el("div");
     m.appendChild(head("Hey "+STATE.first+" 👋","Here's where the <strong>Demo State University</strong> technology assessment stands. Pick up at the highlighted step, or jump anywhere from the left."));
-    m.insertAdjacentHTML("beforeend", howto("<strong>What Apollo does:</strong> it runs the whole assessment engagement <em>and</em> drafts every deliverable. It stands up the project, orchestrates interviews, <strong>AI-drafts each section report from the interview notes</strong>, assembles the full assessment report, budgetary estimate and executive presentation — and a human approves at every gate."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>What Apollo does:</strong> it is a configurable guide, evidence workspace, and skeleton composer for either the full 33-step advisory or an approved targeted engagement. It prepares source-grounded drafts and editable deliverable structures; analysts own findings, recommendations, cost, market interpretation, and final language."));
     var s3=el("div"); s3.style.margin="0 0 18px";
     s3.innerHTML='<div class="eyebrow" style="margin-bottom:8px">New here? Apollo in 3 steps</div><div class="steps3">'+
       '<div class="step3"><div style="display:flex;gap:9px;align-items:center"><span class="s3n">1</span><strong style="font-size:13px">Kick off the engagement</strong></div><div style="font-size:12px;color:var(--muted);margin-top:6px">Apollo reads the contract, stands up the project, and schedules interviews &amp; milestones.</div></div>'+
@@ -538,18 +539,22 @@
   VIEWS.inputs=function(){
     var m=el("div");
     m.appendChild(head("Evidence Intake","Every supplied file is inventoried before it can affect an assessment. The process map controls workflow; companion files add evidence, validation rules, and output guidance."));
-    m.insertAdjacentHTML("beforeend",howto("<strong>Privacy and isolation:</strong> raw student names, IDs, addresses, and other PII stay local and never enter this browser artifact or an AI prompt. Unsupported or cross-domain files remain visible but quarantined from findings."));
+    m.insertAdjacentHTML("beforeend",howto("<strong>Selected-source boundary:</strong> analysts choose approved files from the engagement's SharePoint workspace. Apollo retrieves those sources for this engagement; it does not train on them. Raw names, IDs, and other PII stay local and out of this browser artifact and AI prompts."));
     var g=el("div","grid");g.style.gridTemplateColumns="repeat(auto-fit,minmax(190px,1fr))";
-    [["Logical files","15","15 parsed · none silently dropped"],["Workflow authority","1 SVG","exact 33-step assessment map"],["Supporting references","2 PDFs","accepted as assessment context"],["Cross-domain packages","12 files","readable · quarantined from generation"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>';g.appendChild(c);});m.appendChild(g);
+    [["Governed inputs","21","engagement sources + controlled references"],["Workflow authority","1 SVG","exact 33-step assessment map"],["Output references","2 DOCX","manual + final-report structure"],["Discovery record","1 transcript","SME and solution-architecture decisions"]].forEach(function(k){var c=el("div","card stat");c.innerHTML='<div class="k">'+k[0]+'</div><div class="v num">'+k[1]+'</div><div class="d">'+k[2]+'</div>';g.appendChild(c);});m.appendChild(g);
     var c=el("div","card");c.style.marginTop="14px";c.innerHTML='<h3>Source disposition</h3><div class="card-sub">The status determines whether a file may support client-facing claims</div>';
     c.appendChild(tableEl(["Source","Role","Status","Use in Apollo"],[
       ["Assessments-process-map-basic.svg","Workflow spine",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Defines all 33 steps and gates"],
       ["Assessments_final_manifest_v1.pdf","Manifest",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Confirms entities, connections, and pain points"],
       ["Billable Assessment Process (1).pdf","Supporting process context",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Informs setup, outputs, and human review"],
+      ["Assessment Manual.docx","Operating reference",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Defines engagement execution and analyst responsibilities"],
+      ["James Madison University Assessment Report - FINAL.docx","Final-report exemplar",'<span class="chip ok"><span class="cdot"></span>Structure only</span>',"Guides report fidelity; client facts are excluded"],
+      ["Connecting on Assessments Build (w Demo) (1).docx","Role-tagged discovery",'<span class="chip ok"><span class="cdot"></span>Accepted</span>',"Records Kelser SME and Aditya solution-architecture decisions"],
+      ["Executive presentation exemplar","Deck fidelity reference",'<span class="chip warn"><span class="cdot"></span>Missing</span>',"Required before exact presentation-template fidelity"],
       ["AlvordUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests PII, multi-file intake, and domain isolation only"],
       ["PleasantonUSD.zip · 6 files","K-12 forecasting fixture",'<span class="chip warn"><span class="cdot"></span>Quarantined</span>',"Tests malformed XLSX recovery and draft/final precedence only"]
     ],[false,false,false,false]));m.appendChild(c);
-    var p=el("div","card");p.style.marginTop="14px";p.style.borderLeft="4px solid var(--warn)";p.innerHTML='<h3>Conflict handling</h3><p class="doc-p">Pleasanton contains a stale December workbook marked <strong>DRAFT</strong> and later January/final sources. Apollo records that lineage, does not silently blend versions, and requires explicit review before any supported-domain evidence advances.</p><p class="doc-p"><strong>Parser safeguard:</strong> a workbook that declares dimension A1 but contains 13,084 rows must be recovered from sheet data, never truncated to one cell.</p>';m.appendChild(p);
+    var p=el("div","card");p.style.marginTop="14px";p.style.borderLeft="4px solid var(--brand)";p.innerHTML='<h3>Reconciled use</h3><p class="doc-p">Approved SharePoint sources become evidence-linked working inputs for editable report and presentation skeletons. Templates control structure; they never supply client facts.</p><p class="doc-p"><strong>Human-judgment boundary:</strong> analysts own the bespoke findings, recommendations, market interpretation, cost assumptions, and final client language. Cross-domain fixtures remain quarantined from assessment generation.</p>';m.appendChild(p);
     return m;
   };
 
@@ -595,6 +600,7 @@
       r.innerHTML='<span class="chip '+ck[2]+'"><span class="cdot"></span></span><div style="flex:1"><div style="font-weight:600">'+ck[0]+'</div><div style="color:var(--muted);font-size:12px">'+ck[1]+'</div></div>'; d2.appendChild(r); });
     c2.appendChild(d2); g.appendChild(c2);
     m.appendChild(g);
+    var profile=el("div","card");profile.style.marginTop="14px";profile.innerHTML='<h3>Engagement profile</h3><div class="card-sub">Configured at intake and confirmed by the PM and Lead Analyst</div><div style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px"><div><span class="chip brand">Selected</span><p class="doc-p"><strong>Full advisory</strong><br>All 33 baseline steps, including interviews, section reports, synthesis, budget discussion, report, and final presentation.</p></div><div><span class="chip">Available</span><p class="doc-p"><strong>Targeted premium</strong><br>An explicitly approved subset of domains and deliverables—not an assumed shortcut.</p></div><div><span class="chip warn">Optional · off</span><p class="doc-p"><strong>Survey · workshop · in-person interviews</strong><br>Enabled only when the engagement design calls for them.</p></div></div>';m.appendChild(profile);
 
     var email=el("div","card"); email.style.marginTop="14px";
     email.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center"><h3>Information-request email — AI draft</h3><span class="chip brand"><span class="cdot"></span>Draft · awaiting analyst review</span></div>'+
@@ -669,8 +675,8 @@
 
   VIEWS.deliver=function(){
     var m=el("div");
-    m.appendChild(head("Deliverables","The client-ready artifacts — Final Report, Budgetary Estimate, and Executive Presentation — assembled from the finalized section reports. Modeled on MGT / Tambellini's real deliverable set."));
-    m.insertAdjacentHTML("beforeend", howto("<strong>★ This is what Apollo assembles.</strong> The full assessment report (.docx), the budgetary estimate, and the executive deck (.pptx) — built from the finalized section reports and findings. Narrative is AI-drafted to the house template and voice; every number and finding traces to evidence; a human approves before anything reaches the client."));
+    m.appendChild(head("Deliverables","Editable working artifacts — assessment report, supporting budget, and executive presentation skeleton — assembled from approved evidence and finalized section reports."));
+    m.insertAdjacentHTML("beforeend", howto("<strong>What Apollo prepares:</strong> evidence-linked skeletons in controlled templates. Analysts write and approve bespoke findings, recommendations, market interpretation, cost assumptions, and final language. Nothing is client-ready until that human work and QC are complete."));
     var tabs=tabbar([["report","Final Report (.docx)"],["budget","Budgetary Estimate"],["deck","Presentation (.pptx)"]]);
     m.appendChild(tabs.bar);
 
@@ -683,8 +689,8 @@
     REPORT_TOC.forEach(function(s){ var it=el("div","toc-item"); it.dataset.k=s[0]; it.innerHTML='<span class="tnum">'+s[0]+'</span> '+s[1]; it.onclick=function(){showSec(s[0]);}; toc.appendChild(it); });
     shell.appendChild(toc); shell.appendChild(page); rp.appendChild(shell); showSec("ES");
     var dl=el("div"); dl.style.cssText="margin-top:12px;display:flex;gap:8px;align-items:center";
-    dl.innerHTML='<span class="chip brand">Final Assessment Report</span>';
-    var b=el("button","btn primary sm",'Assemble report'); b.onclick=function(){toast("Report assembled from finalized section reports");}; dl.appendChild(b);
+    dl.innerHTML='<span class="chip brand">Editable Assessment Report Skeleton</span>';
+    var b=el("button","btn primary sm",'Prepare editable skeleton'); b.onclick=function(){toast("Editable report skeleton prepared from approved sources");}; dl.appendChild(b);
     rp.appendChild(dl);
 
     // budget
@@ -702,7 +708,7 @@
     var sg=el("div","slide-grid");
     DECK.forEach(function(t,i){ var s=el("div","slide"); s.innerHTML='<div class="sthumb"><span class="snum">'+(i+1)+'</span>'+(i===0?'<strong style="color:var(--ink);font-size:12px">Demo State U</strong>':(/Heatmap|Maturity|Roadmap|Estimate/.test(t)?'▦':'▤'))+'</div><div class="scap">'+t+'</div>'; sg.appendChild(s); });
     dk.appendChild(sg);
-    dk.insertAdjacentHTML("beforeend",'<div style="margin-top:12px;font-size:12px;color:var(--muted)">20-slide executive presentation · assembled from findings &amp; recommendations · analyst-reviewed</div>');
+    dk.insertAdjacentHTML("beforeend",'<div style="margin-top:12px;font-size:12px;color:var(--muted)">20-slide editable executive outline · analyst review required · exact template fidelity remains gated on the presentation exemplar</div>');
     return m;
   };
   function reconInline(t){ var d=el("div","card"); d.style.marginTop="14px"; d.style.borderColor="var(--ok)"; d.innerHTML='<div style="display:flex;gap:10px;align-items:center;font-size:13px"><span class="chip ok"><span class="cdot"></span>Checked</span><span style="color:var(--muted)">'+t+'</span></div>'; return d; }
@@ -753,18 +759,20 @@
   /* ---------------- Ask Apollo ---------------- */
   var ASK={
     home:["Where do I start?","What does Apollo do for me?","What's the current status?"],
-    inputs:["Why are the ZIPs quarantined?","How is private data protected?","What happens to malformed files?"],
+    inputs:["How are sources selected?","How is private data protected?","What is still missing?"],
     process:["What's a “gate”?","Why is report-writing locked?","How do I approve a step?"],
     setup:["What does Apollo set up automatically?","Can I edit the info-request email?","How is the assessment type decided?"],
     interviews:["How does the interview loop work?","What if an interviewee doesn't reply?","When can report-writing start?"],
     reports:["How are section reports drafted?","Does the interviewee review them?","Is anything invented?"],
-    deliver:["Where do the numbers come from?","How is the budget estimate built?","Can I edit the narrative?"],
+    deliver:["What does Apollo generate?","Where do the numbers come from?","Can I edit the narrative?"],
     evals:["What's the north star?","How is quality measured?","What's checked before delivery?"],
     feedback:["Who sees my feedback?","What gets measured?"]
   };
   var ANSWERS={
     "Why are the ZIPs quarantined?":"They are K-12 enrollment and facilities forecasting packages, while Apollo follows the supplied Higher-Ed Technology Assessment map. Apollo fully inventories them and uses them to test intake safety, but their content cannot populate assessment findings.",
+    "How are sources selected?":"The analyst selects approved files from the engagement's SharePoint workspace. Apollo retrieves only that working set for the engagement; it does not train on the files or treat every folder item as evidence.",
     "How is private data protected?":"Raw names, student IDs, addresses, and other PII stay local. They are excluded from this browser artifact and from AI prompts; only safe aggregate validation facts are shown.",
+    "What is still missing?":"Exact presentation fidelity still needs an approved executive-deck exemplar or template. The controlled template library and student-systems references also remain discovery items; Apollo keeps those gaps visible instead of inventing a format.",
     "What happens to malformed files?":"Apollo fails closed, reports the problem, and preserves other valid work. For the Pleasanton workbook whose metadata says A1 despite 13,084 rows, the parser must inspect the underlying sheet data so it never silently truncates the file.",
     "What's a “gate”?":"A gate is a point where a human must decide — like the PM confirming all interviews are complete, or approving the deliverables before delivery. Apollo prepares everything and waits; it never auto-approves a gate.",
     "Why is report-writing locked?":"The full report can't be assembled until every interview is done and every section report is finalized (the completeness gate, step 24). That protects the assessment from being written on incomplete evidence.",
@@ -779,10 +787,11 @@
     "Does the interviewee review them?":"Yes — every section report goes back to the interviewee for edits before it's finalized. That review is what makes the findings trustworthy.",
     "Is anything invented?":"No. Every claim in a section report traces to interview evidence or a supporting document. Apollo drafts the prose; it does not invent findings, and a human always approves.",
     "Where do the numbers come from?":"Findings come from the finalized section reports; budget figures come from the recommended systems and are checked to tie out. Narrative is AI-drafted to the house template; a human approves before the client sees it.",
+    "What does Apollo generate?":"Apollo prepares editable, evidence-linked report and presentation skeletons in controlled templates. The analyst supplies and approves the bespoke findings, recommendations, market interpretation, cost assumptions, and final client language.",
     "How is the budget estimate built?":"From the recommended systems, with one-time implementation, annual subscription, and a 5-year TCO per component. Apollo verifies the totals reconcile (impl + 5×annual). In the demo these are illustrative planning figures.",
     "Can I edit the narrative?":"Yes — Apollo drafts to the house template and voice; the analyst reviews and edits before approval. Numbers and findings trace to evidence and aren't invented.",
     "Where do I start?":"Start on Home, then move left-to-right: Setup & Alignment → Interviews → Section Reports → Deliverables. The pulsing 'Next' item always shows your current step.",
-    "What does Apollo do for me?":"It runs the whole assessment engagement and drafts every deliverable: it stands up the project, schedules interviews and milestones, drafts each section report from the interview notes, assembles the full report, budgetary estimate and executive deck — and waits for your approval at every gate.",
+    "What does Apollo do for me?":"It provides a configurable guide, evidence workspace, and skeleton composer for full-advisory or approved targeted engagements. It reduces setup and drafting effort while preserving analyst judgment and human approval at every consequential gate.",
     "What's the current status?":"Demo State University is at 82% — Phase 4 of 5. All 18 interviews are done and 16 of 18 section reports are finalized; the budgetary discussion is prepping and the last step is your final PM review & approval.",
     "What's the north star?":"Every finding traces to interview evidence, and no number reaches a client unchecked. Deliverables are correct, on-voice, and human-approved — never quietly wrong.",
     "How is quality measured?":"Findings are checked for traceability to section reports, budget totals are reconciled, and AI-drafted prose is graded for fidelity to the house voice — all before the analyst approves.",
@@ -821,7 +830,7 @@
       });
     });
   }
-  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>☀️ Apollo</span> <button class="version-link" data-changelog>Artifact build v'+APP_VERSION+' · changelog</button><span>·</span><span>33-step process map</span><span>·</span><span>15 logical inputs inventoried</span><span style="margin-left:auto">MGT AI-OG · Tambellini · frontend-template</span>'; return f; }
+  function appFooter(){ var f=el("div","appfooter"); f.innerHTML='<span>☀️ Apollo</span> <button class="version-link" data-changelog>Artifact build v'+APP_VERSION+' · changelog</button><span>·</span><span>33-step process map</span><span>·</span><span>21 governed inputs · editable report + deck skeletons</span><span style="margin-left:auto">MGT AI-OG · Tambellini · frontend-template</span>'; return f; }
   function go(v){ var stg=STAGE[v]; if(stg && stg>STATE.unlocked){ toast("Locked — finish the current step first."); return; } STATE.view=v; buildNav(); var main=$("#main"); main.innerHTML=""; main.appendChild((VIEWS[v]||VIEWS.home)()); main.appendChild(appFooter()); main.scrollTop=0; window.scrollTo(0,0); if($("#drawer").classList.contains("open")) askRender(); }
 
   /* ---------------- events ---------------- */

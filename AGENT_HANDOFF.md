@@ -3,21 +3,26 @@
 ## Current objective
 
 Keep the public Assessment and Demographic review surfaces aligned with their own
-source inputs and prevent cross-build source leakage.
+source inputs and prevent cross-build source leakage. Publish the Assessment-owned
+JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
 
 ## Completed
 
 - Reverted commit `0363163`, which had assigned
   `/Users/mgupta/Desktop/OneDrive_2026-07-22.zip` to Assessments.
-- Restored `assessments/index.html` to its Assessment-only `1.1.0` content:
-  the 33-step process map, 15 logical inputs, and no Demographic standards library.
+- Restored `assessments/index.html` to Assessment-only content and then advanced it
+  to v1.3.0 using the JMU report exemplar, Assessment Manual, and role-tagged SME
+  discovery transcript.
+- Added full-advisory and targeted-premium profiles, optional modules, SharePoint
+  selected-source boundaries, and editable report/deck skeletons with analyst-owned
+  judgment.
 - Left `demographic/index.html` unchanged; the ZIP belongs exclusively to the
   Demographic & Enrollment Study source repository.
 
 ## Current state
 
 - Branch: `gh-pages`
-- Corrective commit: `ccee9d80d740e1d38f2c206c10128e6e73ef6232`
+- Base commit: `2dfa9a8`
 - GitHub Pages deployment run `30058381342`: succeeded
 - Stable public Assessment URL:
   <https://mohilmgt.github.io/mgt-build-frontends/assessments/>
@@ -31,14 +36,17 @@ source inputs and prevent cross-build source leakage.
 
 ## Validation
 
-- No `OneDrive_2026-07-22`, `Standards Library`, `254-file`, or
-  `Assessments-only` content remains in the Assessment page.
-- The restored Assessment page reports artifact version `1.1.0` and
-  `15 logical inputs inventoried`.
-- The live Assessment URL returned HTTP 200 with the corrected content after the
-  Pages deployment completed.
+- No `OneDrive_2026-07-22`, `Standards Library`, `254-file`, or `269 files`
+  content remains in the Assessment page.
+- The candidate reports artifact v1.3.0, 21 governed inputs, 33 workflow steps,
+  editable report/deck skeletons, and `clientReady:false`.
+- Local Chromium validation passed all nine navigation destinations on desktop and
+  390x844 mobile, including Ask Apollo, zero horizontal overflow, and zero console
+  errors.
+- The live stable URL still serves the prior release until this commit is pushed and
+  the Pages deployment succeeds.
 
 ## Exact next action
 
-Keep the two public surfaces isolated. Any future ZIP-derived content belongs only
-under `demographic/`; preserve the Assessment page's own 33-step/15-input contract.
+Commit and push artifact v1.3.0, wait for GitHub Pages deployment, then content-verify
+both stable URLs. Keep ZIP-derived content only under `demographic/`.
