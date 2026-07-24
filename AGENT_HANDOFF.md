@@ -22,8 +22,8 @@ JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
 ## Current state
 
 - Branch: `gh-pages`
-- Base commit: `2dfa9a8`
-- GitHub Pages deployment run `30058381342`: succeeded
+- Published Assessment commit: `ca44dc325bcd43887930c1941a3be30ca3408e97`
+- GitHub Pages deployment run `30114285605`: succeeded
 - Stable public Assessment URL:
   <https://mohilmgt.github.io/mgt-build-frontends/assessments/>
 - Stable public Demographic URL:
@@ -43,10 +43,14 @@ JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
 - Local Chromium validation passed all nine navigation destinations on desktop and
   390x844 mobile, including Ask Apollo, zero horizontal overflow, and zero console
   errors.
-- The live stable URL still serves the prior release until this commit is pushed and
-  the Pages deployment succeeds.
+- The stable public URL serves artifact v1.3.0. Logged-out Chromium validation passed
+  all nine navigation destinations on desktop and 390x844 mobile, including the
+  profile/evidence/deliverable contract, zero horizontal overflow, and zero console errors.
+- The GitHack branch URL with `?v=1.3.0` returns the same release by direct GET.
+  Automated Chromium receives an external Cloudflare interstitial there, so GitHub
+  Pages is the browser-verified public surface.
 
 ## Exact next action
 
-Commit and push artifact v1.3.0, wait for GitHub Pages deployment, then content-verify
-both stable URLs. Keep ZIP-derived content only under `demographic/`.
+Keep ZIP-derived content only under `demographic/`. Update this same Assessment URL
+in place for future releases and repeat served-content desktop/mobile verification.
