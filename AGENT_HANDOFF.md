@@ -17,6 +17,8 @@ source inputs and prevent cross-build source leakage.
 ## Current state
 
 - Branch: `gh-pages`
+- Corrective commit: `ccee9d80d740e1d38f2c206c10128e6e73ef6232`
+- GitHub Pages deployment run `30058381342`: succeeded
 - Stable public Assessment URL:
   <https://mohilmgt.github.io/mgt-build-frontends/assessments/>
 - Stable public Demographic URL:
@@ -33,8 +35,10 @@ source inputs and prevent cross-build source leakage.
   `Assessments-only` content remains in the Assessment page.
 - The restored Assessment page reports artifact version `1.1.0` and
   `15 logical inputs inventoried`.
+- The live Assessment URL returned HTTP 200 with the corrected content after the
+  Pages deployment completed.
 
 ## Exact next action
 
-Push the corrected `gh-pages` commit, wait for GitHub Pages publication, and
-content-verify both stable URLs.
+Keep the two public surfaces isolated. Any future ZIP-derived content belongs only
+under `demographic/`; preserve the Assessment page's own 33-step/15-input contract.
