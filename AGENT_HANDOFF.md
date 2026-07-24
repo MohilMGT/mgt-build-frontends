@@ -3,8 +3,9 @@
 ## Current objective
 
 Keep the public Assessment and Demographic review surfaces aligned with their own
-source inputs and prevent cross-build source leakage. Publish the Assessment-owned
-JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
+source inputs and prevent cross-build source leakage. Publish Apollo artifact v1.3.2
+to the same stable Assessment URL with a restrained neutral palette, pale-yellow
+section headers, and dark readable text.
 
 ## Completed
 
@@ -18,12 +19,16 @@ JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
   judgment.
 - Left `demographic/index.html` unchanged; the ZIP belongs exclusively to the
   Demographic & Enrollment Study source repository.
+- Rebalanced Apollo v1.3.2 from yellow-heavy surfaces to a white/neutral workspace
+  with pale-yellow hierarchy accents.
+- Updated all readable foregrounds to near-black/dark gray, including navigation,
+  buttons, form controls, alerts, chips, links, Ask Apollo, tooltips, and toasts.
 
 ## Current state
 
 - Branch: `gh-pages`
-- Published Assessment commit: `ca44dc325bcd43887930c1941a3be30ca3408e97`
-- GitHub Pages deployment run `30114285605`: succeeded
+- Publication candidate SHA-256:
+  `a8aa4ab53f8d85d59d947972a3c8b5282e8e4699c891af9c1967f079c8af9eb5`
 - Stable public Assessment URL:
   <https://mohilmgt.github.io/mgt-build-frontends/assessments/>
 - Stable public Demographic URL:
@@ -49,8 +54,17 @@ JMU/manual/SME reconciliation as artifact v1.3.0 at the same stable URLs.
 - The GitHack branch URL with `?v=1.3.0` returns the same release by direct GET.
   Automated Chromium receives an external Cloudflare interstitial there, so GitHub
   Pages is the browser-verified public surface.
+- The v1.3.2 candidate exactly matches the canonical static source. Deterministic
+  contrast checks pass WCAG AA, including primary/canvas `16.43:1`,
+  secondary/canvas `8.04:1`, primary/pale-yellow header `14.36:1`, and CTA text
+  `11.13:1`.
+- Prettier, ESLint, all 105 frontend tests, TypeScript, Vite production build,
+  `git diff --check`, and a static white-text declaration sweep pass.
+- Fresh browser control is unavailable in the current runtime. Do not describe
+  v1.3.2 as freshly desktop/mobile browser-verified until that check is rerun.
 
 ## Exact next action
 
-Keep ZIP-derived content only under `demographic/`. Update this same Assessment URL
-in place for future releases and repeat served-content desktop/mobile verification.
+Commit and push v1.3.2 on `gh-pages`, verify the served HTML content and SHA at the
+same stable Assessment URL, then repeat desktop/mobile visual verification when the
+managed browser runtime is available.
