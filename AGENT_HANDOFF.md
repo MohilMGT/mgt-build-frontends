@@ -62,8 +62,11 @@ section headers, and dark readable text.
   `11.13:1`.
 - Prettier, ESLint, all 105 frontend tests, TypeScript, Vite production build,
   `git diff --check`, and a static white-text declaration sweep pass.
-- Fresh browser control is unavailable in the current runtime. Do not describe
-  v1.3.2 as freshly desktop/mobile browser-verified until that check is rerun.
+- Connected Chrome verified the exact stable GitHack URL at desktop `1440x900`
+  and mobile `390x844`. Login and all nine destinations pass in both white and
+  soft-cream themes; every route renders zero white-text elements; there is no
+  document-level horizontal overflow; Ask Apollo has dark text on a white panel;
+  and browser logs contain zero warnings/errors.
 - The stable GitHack URL now serves v1.3.2. Its live GET response matches the
   canonical artifact byte-for-byte at SHA-256
   `a8aa4ab53f8d85d59d947972a3c8b5282e8e4699c891af9c1967f079c8af9eb5`
@@ -71,5 +74,5 @@ section headers, and dark readable text.
 
 ## Exact next action
 
-Repeat desktop/mobile visual verification when the managed browser runtime is
-available. Keep future revisions on this same stable Assessment URL.
+Keep future revisions on this same stable Assessment URL and repeat the same
+served-content, desktop/mobile, theme, and text-color verification.
