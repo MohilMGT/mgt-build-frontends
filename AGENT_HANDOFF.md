@@ -1,38 +1,40 @@
-# Agent handoff — Higher-Ed Technology Assessment frontend
+# Agent handoff — public build frontends
 
-Updated: 2026-07-23
+## Current objective
 
-## Objective
-
-Maintain the existing GitHack review surface for the Higher-Ed Technology
-Assessment and incorporate the additional Assessments-only standards archive.
+Keep the public Assessment and Demographic review surfaces aligned with their own
+source inputs and prevent cross-build source leakage.
 
 ## Completed
 
-- Updated `assessments/index.html` from v1.1.0 to v1.2.0 in place.
-- Added Evidence Intake coverage for all 254 additional files.
-- Added the Standards Library with lifecycle, authority, privacy, workflow
-  coverage, and fail-closed controls.
-- Preserved the exact 33-step Higher-Ed Technology Assessment workflow.
-- Kept names, photographs, biographies, and other PII out of the frontend.
-
-## Validation
-
-- JavaScript syntax: pass (`node --check`).
-- Chromium desktop 1440x1000: pass.
-- Chromium mobile 390x844: pass.
-- All navigation destinations, Evidence Intake, Standards Library, Ask Apollo,
-  theme toggle, console/page errors, and horizontal overflow: pass.
+- Reverted commit `0363163`, which had assigned
+  `/Users/mgupta/Desktop/OneDrive_2026-07-22.zip` to Assessments.
+- Restored `assessments/index.html` to its Assessment-only `1.1.0` content:
+  the 33-step process map, 15 logical inputs, and no Demographic standards library.
+- Left `demographic/index.html` unchanged; the ZIP belongs exclusively to the
+  Demographic & Enrollment Study source repository.
 
 ## Current state
 
-The `gh-pages` branch is the stable GitHack source branch. The durable review URL
-is:
+- Branch: `gh-pages`
+- Stable public Assessment URL:
+  <https://mohilmgt.github.io/mgt-build-frontends/assessments/>
+- Stable public Demographic URL:
+  <https://mohilmgt.github.io/mgt-build-frontends/demographic/>
 
-https://raw.githack.com/MohilMGT/mgt-build-frontends/gh-pages/assessments/index.html
+## Files changed
+
+- `assessments/index.html`
+- `AGENT_HANDOFF.md`
+
+## Validation
+
+- No `OneDrive_2026-07-22`, `Standards Library`, `254-file`, or
+  `Assessments-only` content remains in the Assessment page.
+- The restored Assessment page reports artifact version `1.1.0` and
+  `15 logical inputs inventoried`.
 
 ## Exact next action
 
-For future Assessments frontend revisions, update this same file and branch,
-rerun desktop/mobile content validation, push, then verify the durable URL by
-content rather than HTTP status alone.
+Push the corrected `gh-pages` commit, wait for GitHub Pages publication, and
+content-verify both stable URLs.
